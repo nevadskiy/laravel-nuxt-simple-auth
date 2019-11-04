@@ -8,6 +8,10 @@ use Tests\DatabaseTestCase;
 
 class SignUpStoreTest extends DatabaseTestCase
 {
+    // TODO: authenticated_user_cannot_register_a_new_account
+    // TODO: validation errors
+    // TODO: verification email
+
     /** @test */
     public function guests_can_sign_up_with_email_and_password(): void
     {

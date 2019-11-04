@@ -4,7 +4,7 @@ namespace Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
-abstract class ApiTestCase extends TestCase
+abstract class DatabaseTestCase extends TestCase
 {
     use RefreshDatabase;
 }

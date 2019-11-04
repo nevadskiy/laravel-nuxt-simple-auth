@@ -6,9 +6,18 @@ use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * @property int id
+ * @property string email
+ */
 class User extends Authenticatable
 {
     use Notifiable;
+
+    /**
+     * Name of the associated database table.
+     */
+    public const TABLE = 'users';
 
     /**
      * The attributes that are mass assignable.
@@ -16,7 +25,8 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'email',
+        'password',
     ];
 
     /**
@@ -25,7 +35,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
     ];
 
     /**

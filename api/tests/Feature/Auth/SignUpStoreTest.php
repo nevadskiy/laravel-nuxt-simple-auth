@@ -2,35 +2,57 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Services\Auth\PasswordHasherInterface;
 use App\User;
-use Tests\ApiTestCase;
-use Mockery;
+use Illuminate\Foundation\Testing\TestResponse;
+use Tests\DatabaseTestCase;
 
-class ExampleTest extends ApiTestCase
+class SignUpStoreTest extends DatabaseTestCase
 {
     /** @test */
     public function guests_can_sign_up_with_email_and_password(): void
     {
-        $hasher = Mockery::mock(PasswordHasherInterface::class)
-            ->shouldReceive('hash')
-            ->once()
-            ->with('secret123')
-            ->andReturn('secret123')
-            ->getMock();
-
-        $this->app->instance(PasswordHasherInterface::class, $hasher);
-
-        $response = $this->postJson(route('api.signup.store'), [
-            'email' => 'guest@mail.com',
-            'passport' => 'secret123',
+        $response = $this->signUp([
+            'email' => 'user@mail.com',
+            'password' => 'secret123',
         ]);
 
         $response->assertCreated();
 
         $this->assertDatabaseHas(User::TABLE, [
+            'email' => 'user@mail.com',
+        ]);
+    }
+
+    /** @test */
+    public function api_returns_correct_response_after_success_sign_up(): void
+    {
+        $response = $this->signUp([
+            'email' => 'user@mail.com',
+        ]);
+
+        $response->assertJsonStructure([
+            'data' => [
+                'id',
+                'email',
+            ]
+        ]);
+
+        $response->assertJsonFragment([
+            'email' => 'user@mail.com',
+        ]);
+    }
+
+    /**
+     * Send a sign up request.
+     *
+     * @param array $overrides
+     * @return TestResponse
+     */
+    private function signUp(array $overrides = []): TestResponse
+    {
+        return $this->postJson(route('api.auth.signup.store'), array_merge([
             'email' => 'guest@mail.com',
             'password' => 'secret123',
-        ]);
+        ], $overrides));
     }
 }

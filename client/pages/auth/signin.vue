@@ -1,6 +1,6 @@
 <template>
   <div class="flex justify-center items-center">
-    <div class="max-w-sm w-full p-8 bg-gray-200 shadow-lg rounded-lg">
+    <div class="max-w-sm w-full p-8 bg-gray-300 shadow-lg rounded-lg">
       <h2 class="font-light text-center text-3xl text-blue-500">
         Welcome back
       </h2>

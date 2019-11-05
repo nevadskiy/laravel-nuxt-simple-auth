@@ -1,11 +1,11 @@
 <template>
   <div class="flex justify-center items-center">
     <div class="max-w-sm w-full p-8 bg-gray-200 shadow-lg rounded-lg">
-      <h2 class="font-bold text-3xl text-blue-500">
+      <h2 class="font-light text-center text-3xl text-blue-500">
         Getting Started
       </h2>
 
-      <p class="mt-1">
+      <p class="mt-1 text-center font-light text-gray-900">
         Create an account
       </p>
 
@@ -44,9 +44,9 @@
         </AppButton>
       </form>
 
-      <p class="mt-6 text-center">
+      <p class="mt-6 text-center font-light">
         Already have an account?
-        <nuxt-link :to="{ name: 'auth-signin' }" class="font-bold">
+        <nuxt-link :to="{ name: 'auth-signin' }" class="font-normal">
           Sign in
         </nuxt-link>
       </p>
@@ -60,6 +60,11 @@ import AppButton from '~/components/AppButton.vue'
 
 export default {
   layout: 'auth',
+
+  transition: {
+    name: 'slide-right',
+    mode: 'out-in'
+  },
 
   components: {
     AppInput,

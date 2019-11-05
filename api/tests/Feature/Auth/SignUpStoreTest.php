@@ -11,6 +11,7 @@ class SignUpStoreTest extends DatabaseTestCase
     // TODO: authenticated_user_cannot_register_a_new_account
     // TODO: validation errors
     // TODO: verification email
+    // TODO: test that api token is null
 
     /** @test */
     public function guests_can_sign_up_with_email_and_password(): void
@@ -30,20 +31,13 @@ class SignUpStoreTest extends DatabaseTestCase
     /** @test */
     public function api_returns_correct_response_after_success_sign_up(): void
     {
-        $response = $this->signUp([
-            'email' => 'user@mail.com',
-        ]);
-
-        $response->assertJsonStructure([
-            'data' => [
-                'id',
-                'email',
-            ]
-        ]);
-
-        $response->assertJsonFragment([
-            'email' => 'user@mail.com',
-        ]);
+        $this->signUp(['email' => 'user@mail.com'])
+            ->assertJsonStructure([
+                'data' => ['id', 'email']
+            ])
+            ->assertJsonFragment([
+                'email' => 'user@mail.com'
+            ]);
     }
 
     /**

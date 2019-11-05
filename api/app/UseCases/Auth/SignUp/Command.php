@@ -8,6 +8,7 @@ class Command
      * @var string
      */
     public $email;
+
     /**
      * @var string
      */

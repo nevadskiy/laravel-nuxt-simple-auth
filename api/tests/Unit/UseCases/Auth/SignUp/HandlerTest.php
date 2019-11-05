@@ -1,12 +1,12 @@
 <?php
 
-namespace Tests\Feature\Auth;
+namespace Tests\Feature\Auth\SignUp;
 
-use App\Services\Auth\PasswordHasherInterface;
 use App\UseCases\Auth\SignUp\Command;
 use App\UseCases\Auth\SignUp\Handler;
 use App\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\Facades\Event;
 use Tests\DatabaseTestCase;
 
@@ -15,8 +15,8 @@ class HandlerTest extends DatabaseTestCase
     /** @test */
     public function it_creates_users_with_correct_passwords(): void
     {
-        $this->mock(PasswordHasherInterface::class)
-            ->shouldReceive('hash')
+        $this->mock(Hasher::class)
+            ->shouldReceive('make')
             ->once()
             ->with('secret')
             ->andReturn('secret');

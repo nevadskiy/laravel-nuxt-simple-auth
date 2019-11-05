@@ -2,23 +2,23 @@
 
 namespace App\UseCases\Auth\SignUp;
 
-use App\Services\Auth\PasswordHasherInterface;
 use App\User;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Contracts\Hashing\Hasher;
 
 class Handler
 {
     /**
-     * @var PasswordHasherInterface
+     * @var Hasher
      */
     private $hasher;
 
     /**
      * Handler constructor.
      *
-     * @param PasswordHasherInterface $hasher
+     * @param Hasher $hasher
      */
-    public function __construct(PasswordHasherInterface $hasher)
+    public function __construct(Hasher $hasher)
     {
         $this->hasher = $hasher;
     }
@@ -33,7 +33,7 @@ class Handler
     {
         $user = new User([
             'email' => $command->email,
-            'password' => $this->hasher->hash($command->password),
+            'password' => $this->hasher->make($command->password),
         ]);
 
         $user->save();

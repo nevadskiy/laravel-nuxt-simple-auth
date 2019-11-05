@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 /**
  * @property int id
  * @property string email
+ * @property string api_token
  */
 class User extends Authenticatable
 {
@@ -27,6 +28,7 @@ class User extends Authenticatable
     protected $fillable = [
         'email',
         'password',
+        'api_token',
     ];
 
     /**

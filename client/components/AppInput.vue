@@ -7,7 +7,6 @@
         :id="id"
         :value="value"
         v-bind="$attrs"
-        :class="inputClasses"
         class="mt-1 w-full py-2 px-3 pr-10 font-light border-2 border-transparent truncate bg-white text-gray-800 shadow rounded focus:outline-none focus:border-blue-400"
         @input="update"
       >

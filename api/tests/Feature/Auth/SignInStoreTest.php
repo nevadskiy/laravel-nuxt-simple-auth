@@ -33,6 +33,19 @@ class SignInStoreTest extends DatabaseTestCase
     }
 
     /** @test */
+    public function guests_cannot_sign_into_their_account_with_invalid_credentials(): void
+    {
+        app(UserFactory::class)->withCredentials('user@mail.com', 'secret123')->create();
+
+        $response = $this->signIn([
+            'email' => 'user@mail.com',
+            'password' => 'INVALID_PASSWORD',
+        ]);
+
+        $response->assertJsonValidationErrors('email');
+    }
+
+    /** @test */
     public function authenticated_users_cannot_sign_in_again(): void
     {
         $user = app(UserFactory::class)->withCredentials('user@mail.com', 'secret123')->create();

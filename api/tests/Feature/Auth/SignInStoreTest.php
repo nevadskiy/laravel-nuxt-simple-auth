@@ -4,7 +4,6 @@ namespace Tests\Feature\Auth;
 
 use App\Services\Auth\ApiTokenGenerator;
 use App\User;
-use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Http\Response;
 use Tests\DatabaseTestCase;
@@ -77,21 +76,6 @@ class SignInStoreTest extends DatabaseTestCase
             'email' => 'user@mail.com',
             'password' => 'secret123',
         ], $overrides));
-    }
-
-    /**
-     * Create user with provided credentials.
-     *
-     * @param string $email
-     * @param string $password
-     * @return User
-     */
-    private function createUserWithCredentials(string $email = 'user@mail.com', string $password = 'secret123'): User
-    {
-        return factory(User::class)->create([
-            'email' => 'user@mail.com',
-            'password' => resolve(Hasher::class)->make($password),
-        ]);
     }
 
     /**

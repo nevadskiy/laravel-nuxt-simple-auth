@@ -2,13 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
-use Illuminate\Support\Facades\Auth;
 use Tests\DatabaseTestCase;
 use Tests\Factory\UserFactory;
 
-/**
- * TODO: guest cannot do the same
- */
 class UserIndexTest extends DatabaseTestCase
 {
     use AuthRequests;
@@ -25,7 +21,7 @@ class UserIndexTest extends DatabaseTestCase
             ])
         );
 
-        Auth::user()->is($user);
+        $this->assertAuthenticatedAs($user);
         $response->assertOk();
         $response->assertExactJson([
             'data' => [
@@ -33,5 +29,30 @@ class UserIndexTest extends DatabaseTestCase
                 'email' => 'user@mail.com',
             ]
         ]);
+    }
+
+    /** @test */
+    public function guests_cannot_request_any_information_without_api_token(): void
+    {
+        $response = $this->getUser('');
+
+        $this->assertGuest();
+        $response->assertUnauthorized();
+    }
+
+    /** @test */
+    public function guests_cannot_request_any_information_with_wrong_api_token(): void
+    {
+        app(UserFactory::class)->withCredentials('user@mail.com', 'secret123')->create();
+
+        $token = $this->getApiToken([
+            'email' => 'user@mail.com',
+            'password' => 'secret123',
+        ]);
+
+        $response = $this->getUser("INVALID{$token}");
+
+        $this->assertGuest();
+        $response->assertUnauthorized();
     }
 }

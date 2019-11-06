@@ -12,6 +12,14 @@ use Illuminate\Validation\ValidationException;
 class SignInController extends Controller
 {
     /**
+     * SignInController constructor.
+     */
+    public function __construct()
+    {
+        $this->middleware('guest');
+    }
+
+    /**
      * Handle a sign in request.
      *
      * @param SignInStoreRequest $request

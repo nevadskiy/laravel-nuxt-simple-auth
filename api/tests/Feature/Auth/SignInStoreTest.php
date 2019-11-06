@@ -8,9 +8,6 @@ use Illuminate\Http\Response;
 use Tests\DatabaseTestCase;
 use Tests\Factory\UserFactory;
 
-/**
- * TODO: authenticated_user_cannot_sign_into_an_account
- */
 class SignInStoreTest extends DatabaseTestCase
 {
     use AuthRequests;
@@ -33,6 +30,21 @@ class SignInStoreTest extends DatabaseTestCase
             'email' => 'user@mail.com',
             'api_token' => $token
         ]);
+    }
+
+    /** @test */
+    public function authenticated_users_cannot_sign_in_again(): void
+    {
+        $user = app(UserFactory::class)->withCredentials('user@mail.com', 'secret123')->create();
+
+        $this->be($user);
+
+        $response = $this->signIn([
+            'email' => 'user@mail.com',
+            'password' => 'secret123',
+        ]);
+
+        $response->assertUnauthorized();
     }
 
     /** @test */

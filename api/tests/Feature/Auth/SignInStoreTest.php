@@ -4,14 +4,16 @@ namespace Tests\Feature\Auth;
 
 use App\Services\Auth\ApiTokenGenerator;
 use App\User;
-use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Http\Response;
 use Tests\DatabaseTestCase;
 use Tests\Factory\UserFactory;
 
+/**
+ * TODO: authenticated_user_cannot_sign_into_an_account
+ */
 class SignInStoreTest extends DatabaseTestCase
 {
-    // TODO: authenticated_user_cannot_sign_into_an_account
+    use AuthRequests;
 
     /** @test */
     public function guests_can_sign_into_account_with_email_and_password(): void
@@ -63,20 +65,6 @@ class SignInStoreTest extends DatabaseTestCase
                 $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
             }
         }
-    }
-
-    /**
-     * Send a sign in request.
-     *
-     * @param array $overrides
-     * @return TestResponse
-     */
-    private function signIn(array $overrides = []): TestResponse
-    {
-        return $this->postJson(route('api.auth.signin.store'), array_merge([
-            'email' => 'user@mail.com',
-            'password' => 'secret123',
-        ], $overrides));
     }
 
     /**

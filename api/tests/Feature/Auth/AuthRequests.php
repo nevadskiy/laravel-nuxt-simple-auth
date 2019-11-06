@@ -1,0 +1,64 @@
+<?php
+
+namespace Tests\Feature\Auth;
+
+use Illuminate\Foundation\Testing\TestResponse;
+use Tests\TestCase;
+
+/**
+ * @mixin TestCase
+ */
+trait AuthRequests
+{
+    /**
+     * Send a sign up request.
+     *
+     * @param array $overrides
+     * @return TestResponse
+     */
+    public function signUp(array $overrides = []): TestResponse
+    {
+        return $this->postJson(route('api.auth.signup.store'), array_merge([
+            'email' => 'user@mail.com',
+            'password' => 'secret123',
+        ], $overrides));
+    }
+
+    /**
+     * Send a sign in request.
+     *
+     * @param array $overrides
+     * @return TestResponse
+     */
+    private function signIn(array $overrides = []): TestResponse
+    {
+        return $this->postJson(route('api.auth.signin.store'), array_merge([
+            'email' => 'user@mail.com',
+            'password' => 'secret123',
+        ], $overrides));
+    }
+
+    /**
+     * Get the API token by credentials.
+     *
+     * @param array $credentials
+     * @return string
+     */
+    private function getApiToken(array $credentials): string
+    {
+        return $this->signIn($credentials)->json('api_token');
+    }
+
+    /**
+     * Request info about the currently authenticated user.
+     *
+     * @param string $apiToken
+     * @return TestResponse
+     */
+    private function getUser(string $apiToken): TestResponse
+    {
+        return $this->getJson(route('api.auth.user.index'), [
+            'Authorization' => "Bearer {$apiToken}"
+        ]);
+    }
+}

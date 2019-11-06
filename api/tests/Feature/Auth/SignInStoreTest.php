@@ -6,12 +6,12 @@ use App\Services\Auth\ApiTokenGenerator;
 use App\User;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Foundation\Testing\TestResponse;
+use Illuminate\Http\Response;
 use Tests\DatabaseTestCase;
 
 class SignInStoreTest extends DatabaseTestCase
 {
     // TODO: authenticated_user_cannot_sign_into_an_account
-    // TODO: validation errors
 
     /** @test */
     public function guests_can_sign_into_account_with_email_and_password(): void
@@ -52,6 +52,19 @@ class SignInStoreTest extends DatabaseTestCase
         ]);
     }
 
+    /** @test */
+    public function invalid_values_do_not_pass_the_sign_in_validation_process(): void
+    {
+        foreach ($this->invalidFields() as $field => $values) {
+            foreach ($values as $rule => $value) {
+                $response = $this->signIn([$field => $value]);
+                $this->assertEmpty(User::all(), "Request was processed with the invalid {$field} for the rule {$rule}");
+                $response->assertJsonValidationErrors($field);
+                $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+        }
+    }
+
     /**
      * Send a sign in request.
      *
@@ -79,5 +92,28 @@ class SignInStoreTest extends DatabaseTestCase
             'email' => 'user@mail.com',
             'password' => resolve(Hasher::class)->make($password),
         ]);
+    }
+
+    /**
+     * Invalid fields for testing validation errors.
+     *
+     * @return array
+     */
+    private function invalidFields(): array
+    {
+        return [
+            'email' => [
+                'required' => '',
+                'string' => ['INVALID_STRING'],
+                'email' => 'INVALID_EMAIL',
+                'max:255' => str_repeat('A', 256 - 9) . '@mail.com',
+            ],
+
+            'password' => [
+                'required' => '',
+                'string' => ['INVALID_STRING'],
+                'max:255' => str_repeat('A', 256 - 9) . '@mail.com',
+            ],
+        ];
     }
 }

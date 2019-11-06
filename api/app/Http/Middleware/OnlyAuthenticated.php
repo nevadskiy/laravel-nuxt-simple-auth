@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
-class RedirectIfAuthenticated
+class OnlyAuthenticated
 {
     /**
      * Handle an incoming request.
@@ -19,7 +19,11 @@ class RedirectIfAuthenticated
     public function handle(Request $request, Closure $next)
     {
         if (Auth::check()) {
-            return response()->json([], Response::HTTP_UNAUTHORIZED);
+            if ($request->expectsJson()) {
+                return response()->json([], Response::HTTP_UNAUTHORIZED);
+            }
+
+            return redirect('/home');
         }
 
         return $next($request);

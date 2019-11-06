@@ -7,6 +7,7 @@ use App\User;
 use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Http\Response;
 use Tests\DatabaseTestCase;
+use Tests\Factory\UserFactory;
 
 class SignInStoreTest extends DatabaseTestCase
 {
@@ -15,7 +16,7 @@ class SignInStoreTest extends DatabaseTestCase
     /** @test */
     public function guests_can_sign_into_account_with_email_and_password(): void
     {
-        $this->createUserWithCredentials('user@mail.com', 'secret123');
+        app(UserFactory::class)->withCredentials('user@mail.com', 'secret123')->create();
 
         $response = $this->signIn([
             'email' => 'user@mail.com',
@@ -35,7 +36,7 @@ class SignInStoreTest extends DatabaseTestCase
     /** @test */
     public function api_returns_correct_response_after_success_sign_up(): void
     {
-        $this->createUserWithCredentials('user@mail.com', 'secret123');
+        app(UserFactory::class)->withCredentials('user@mail.com', 'secret123')->create();
 
         $this->mock(ApiTokenGenerator::class)
             ->shouldReceive('generate')

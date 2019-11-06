@@ -5,6 +5,7 @@ namespace Tests\Feature\Auth;
 use Illuminate\Foundation\Testing\TestResponse;
 use Illuminate\Support\Facades\Auth;
 use Tests\DatabaseTestCase;
+use Tests\Factory\UserFactory;
 
 class UserIndexTest extends DatabaseTestCase
 {
@@ -13,7 +14,7 @@ class UserIndexTest extends DatabaseTestCase
     /** @test */
     public function users_can_request_information_about_their_account_with_api_token(): void
     {
-        $user = $this->createUserWithCredentials('user@mail.com', 'secret123');
+        $user = app(UserFactory::class)->withCredentials('user@mail.com', 'secret123')->create();
 
         $response = $this->getUser(
             $this->getApiTokenByCredentials('user@mail.com', 'secret123')

@@ -61,4 +61,17 @@ trait AuthRequests
             'Authorization' => "Bearer {$apiToken}"
         ]);
     }
+
+    /**
+     * Send a forgot password request.
+     *
+     * @param array $overrides
+     * @return TestResponse
+     */
+    private function forgotPassword(array $overrides = []): TestResponse
+    {
+        return $this->postJson(route('api.auth.forgotten-password.store'), array_merge([
+            'email' => 'user@mail.com'
+        ], $overrides));
+    }
 }

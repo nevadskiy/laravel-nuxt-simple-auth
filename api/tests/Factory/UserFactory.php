@@ -24,10 +24,10 @@ class UserFactory
      * @param string $password
      * @return $this
      */
-    public function withCredentials(string $email, string $password): self
+    public function withCredentials(string $email, string $password = null): self
     {
         $this->email = $email;
-        $this->password = $password;
+        $this->password = $password ?: $this->password;
 
         return $this;
     }

@@ -7,7 +7,6 @@ use App\UseCases\Auth\SignIn\Command;
 use App\UseCases\Auth\SignIn\Handler;
 use App\User;
 use DomainException;
-use Illuminate\Contracts\Hashing\Hasher;
 use Tests\DatabaseTestCase;
 
 class HandlerTest extends DatabaseTestCase
@@ -20,7 +19,7 @@ class HandlerTest extends DatabaseTestCase
             'password' => 'database.password',
         ]);
 
-        $this->mockPasswordHasher('request.password', 'database.password', true);
+        $this->mockHashCheck('request.password', 'database.password', true);
 
         $command = new Command('user@mail.com', 'request.password');
 
@@ -37,7 +36,7 @@ class HandlerTest extends DatabaseTestCase
             'password' => 'database.password',
         ]);
 
-        $this->mockPasswordHasher('request.password', 'database.password', true);
+        $this->mockHashCheck('request.password', 'database.password', true);
 
         $this->mock(ApiTokenGenerator::class)
             ->shouldReceive('generate')
@@ -74,7 +73,7 @@ class HandlerTest extends DatabaseTestCase
             'password' => 'database.password',
         ]);
 
-        $this->mockPasswordHasher('password', 'database.password', false);
+        $this->mockHashCheck('password', 'database.password', false);
 
         $command = new Command('user@mail.com', 'password');
 
@@ -86,28 +85,5 @@ class HandlerTest extends DatabaseTestCase
         } catch (DomainException $e) {
             $spy->shouldNotHaveReceived('generate');
         }
-    }
-
-    /**
-     * Mock the password hasher.
-     *
-     * @param string $requestPassword
-     * @param string $databasePassword
-     * @param bool $result
-     */
-    private function mockPasswordHasher(
-        string $requestPassword = 'request.password',
-        string $databasePassword = 'database.password',
-        bool $result = true
-    ): void
-    {
-        $hasher = $this->mock(Hasher::class)
-            ->shouldReceive('check')
-            ->once()
-            ->with($requestPassword, $databasePassword)
-            ->andReturn($result)
-            ->getMock();
-
-        $this->app->instance('hash', $hasher);
     }
 }

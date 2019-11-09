@@ -39,6 +39,16 @@ trait AuthRequests
     }
 
     /**
+     * Sign out request.
+     *
+     * @return TestResponse
+     */
+    private function signOut(): TestResponse
+    {
+        return $this->deleteJson(route('api.auth.signout.destroy'));
+    }
+
+    /**
      * Get the API token by credentials.
      *
      * @param array $credentials

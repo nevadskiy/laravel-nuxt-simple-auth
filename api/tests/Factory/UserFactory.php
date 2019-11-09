@@ -18,6 +18,21 @@ class UserFactory
     private $password = 'secret123';
 
     /**
+     * @var Hasher
+     */
+    private $hasher;
+
+    /**
+     * UserFactory constructor.
+     *
+     * @param Hasher $hasher
+     */
+    public function __construct(Hasher $hasher)
+    {
+        $this->hasher = $hasher;
+    }
+
+    /**
      * Set user credentials
      *
      * @param string $email
@@ -41,7 +56,7 @@ class UserFactory
     {
         return factory(User::class)->create([
             'email' => $this->email,
-            'password' => resolve(Hasher::class)->make($this->password),
+            'password' => $this->hasher->make($this->password),
         ]);
     }
 }

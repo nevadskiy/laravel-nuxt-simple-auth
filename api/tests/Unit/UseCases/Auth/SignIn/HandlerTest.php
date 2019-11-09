@@ -56,12 +56,10 @@ class HandlerTest extends DatabaseTestCase
     /** @test */
     public function it_throws_an_exception_if_user_is_not_found(): void
     {
-        $command = new Command('user@mail.com', 'password');
-
         $spy = $this->spy(ApiTokenGenerator::class);
 
         try {
-            app(Handler::class)->handle($command);
+            app(Handler::class)->handle(new Command('user@mail.com', 'password'));
             $this->fail('Exception was not thrown but should.');
         } catch (DomainException $e) {
             $spy->shouldNotHaveReceived('generate');

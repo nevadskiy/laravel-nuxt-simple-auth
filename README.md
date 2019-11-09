@@ -1,4 +1,7 @@
-# TODO
+# TODO api
+- add package for universal tokens generation with all required features (hashing, checking, expiring, etc.) and use it for password_reset
+
+# TODO docker
 - add instructions about `make up` and `make down` commands
 
 ## About

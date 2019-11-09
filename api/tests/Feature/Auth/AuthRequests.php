@@ -74,4 +74,19 @@ trait AuthRequests
             'email' => 'user@mail.com'
         ], $overrides));
     }
+
+    /**
+     * Send a reset password request.
+     *
+     * @param array $overrides
+     * @return TestResponse
+     */
+    private function resetPassword(array $overrides = []): TestResponse
+    {
+        return $this->putJson(route('api.auth.forgotten-password.update'), array_merge([
+            'email' => 'user@mail.com',
+            'password' => 'NEW_PASSWORD',
+            'token' => 'RESET_PASSWORD_TOKEN',
+        ], $overrides));
+    }
 }

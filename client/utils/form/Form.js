@@ -46,6 +46,15 @@ export default class Form {
   }
 
   /**
+   * Get the form field value.
+   * @param field
+   * @returns {null|*}
+   */
+  get (field) {
+    return this[field]
+  }
+
+  /**
    * Transform the form data by merging with the given data object.
    * @param data
    */

@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Auth;
 
-use App\UseCases\Auth\ForgottenPassword\Command;
+use App\UseCases\Auth\ForgotPassword\Command;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ForgottenPasswordStoreRequest extends FormRequest

@@ -43,6 +43,8 @@ class ForgottenPasswordStoreTest extends DatabaseTestCase
     /** @test */
     public function authenticated_users_cannot_request_a_reset_password_link(): void
     {
+        Notification::fake();
+
         $user = app(UserFactory::class)->withCredentials('user@mail.com')->create();
         $this->be($user);
 

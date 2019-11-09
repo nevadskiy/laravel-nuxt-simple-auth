@@ -1,6 +1,6 @@
 <?php
 
-namespace App\UseCases\Auth\ForgottenPassword;
+namespace App\UseCases\Auth\ForgotPassword;
 
 use DomainException;
 use Illuminate\Contracts\Auth\PasswordBroker;

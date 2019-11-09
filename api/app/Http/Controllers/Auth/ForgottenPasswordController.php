@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\ForgottenPasswordStoreRequest;
 use App\Http\Requests\Auth\ForgottenPasswordUpdateRequest;
-use App\UseCases\Auth\ForgottenPassword;
+use App\UseCases\Auth\ForgotPassword;
 use App\UseCases\Auth\ResetPassword;
 use DomainException;
 use Illuminate\Http\JsonResponse;
@@ -26,11 +26,11 @@ class ForgottenPasswordController extends Controller
      * Handle a forgotten password store request.
      *
      * @param ForgottenPasswordStoreRequest $request
-     * @param ForgottenPassword\Handler $handler
+     * @param ForgotPassword\Handler $handler
      * @return JsonResponse|Response
      * @throws ValidationException
      */
-    public function store(ForgottenPasswordStoreRequest $request, ForgottenPassword\Handler $handler)
+    public function store(ForgottenPasswordStoreRequest $request, ForgotPassword\Handler $handler)
     {
         try {
             $handler->handle($request->toCommand());

@@ -3,7 +3,6 @@
 namespace Tests\Feature\Auth;
 
 use App\User;
-use Illuminate\Http\Response;
 use Tests\DatabaseTestCase;
 
 class SignOutDestroyTest extends DatabaseTestCase
@@ -18,7 +17,7 @@ class SignOutDestroyTest extends DatabaseTestCase
 
         $response = $this->signOutRequest();
 
-        $response->assertStatus(Response::HTTP_NO_CONTENT);
+        $response->assertNoContent();
         $this->assertEmpty($user->fresh()->api_token);
     }
 

@@ -33,7 +33,7 @@ class Handler
     }
 
     /**
-     * Handle the sign up use case.
+     * Handle the reset password use case.
      *
      * @param Command $command
      * @return void

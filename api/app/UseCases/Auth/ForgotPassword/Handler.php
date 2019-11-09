@@ -23,7 +23,7 @@ class Handler
     }
 
     /**
-     * Handle the sign up use case.
+     * Handle the forgot password use case.
      *
      * @param Command $command
      * @return void

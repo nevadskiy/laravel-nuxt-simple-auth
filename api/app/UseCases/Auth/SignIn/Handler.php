@@ -36,7 +36,7 @@ class Handler
     }
 
     /**
-     * Handle the sign up use case.
+     * Handle the sign in use case.
      *
      * @param Command $command
      * @return User

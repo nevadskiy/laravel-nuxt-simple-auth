@@ -66,9 +66,15 @@ logs-clear:
 db-migrate:
 	docker-compose exec php-cli php artisan migrate
 
+# Migrate alias
+migrate: db-migrate
+
 # Run migrations rollback
 db-rollback:
 	docker-compose exec php-cli php artisan rollback
+
+# Rollback alias
+rollback: db-rollback
 
 # Run seeders
 db-seed:
@@ -160,6 +166,9 @@ env-client:
 permissions:
 	sudo chmod -R 777 api/bootstrap/cache
 	sudo chmod -R 777 api/storage
+
+# Permissions alias
+perm: permissions
 
 # Generate a Laravel app key
 key:

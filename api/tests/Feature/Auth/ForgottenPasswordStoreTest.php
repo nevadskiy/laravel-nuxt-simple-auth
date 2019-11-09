@@ -20,7 +20,7 @@ class ForgottenPasswordStoreTest extends DatabaseTestCase
 
         $user = app(UserFactory::class)->withCredentials('user@mail.com')->create();
 
-        $response = $this->forgotPassword(['email' => 'user@mail.com']);
+        $response = $this->forgotPasswordRequest(['email' => 'user@mail.com']);
 
         $response->assertCreated();
         $response->assertExactJson(['message' => __('passwords.sent')]);
@@ -33,7 +33,7 @@ class ForgottenPasswordStoreTest extends DatabaseTestCase
     {
         Notification::fake();
 
-        $response = $this->forgotPassword(['email' => 'unknown@mail.com']);
+        $response = $this->forgotPasswordRequest(['email' => 'unknown@mail.com']);
 
         $response->assertJsonValidationErrors('email');
         $this->assertEmpty(DB::table('password_resets')->get());
@@ -48,7 +48,7 @@ class ForgottenPasswordStoreTest extends DatabaseTestCase
         $user = app(UserFactory::class)->withCredentials('user@mail.com')->create();
         $this->be($user);
 
-        $response = $this->forgotPassword(['email' => 'user@mail.com']);
+        $response = $this->forgotPasswordRequest(['email' => 'user@mail.com']);
 
         $response->assertUnauthorized();
         Notification::assertNothingSent();
@@ -60,7 +60,7 @@ class ForgottenPasswordStoreTest extends DatabaseTestCase
         Notification::fake();
 
         foreach ($this->invalidEmails() as $rule => $value) {
-            $response = $this->forgotPassword(['email' => $value]);
+            $response = $this->forgotPasswordRequest(['email' => $value]);
             $this->assertEmpty(DB::table('password_resets')->get(), "Token was generated for invalid email on {$rule}");
             $response->assertJsonValidationErrors('email');
             $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);

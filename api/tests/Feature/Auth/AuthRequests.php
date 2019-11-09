@@ -16,7 +16,7 @@ trait AuthRequests
      * @param array $overrides
      * @return TestResponse
      */
-    public function signUp(array $overrides = []): TestResponse
+    public function signUpRequest(array $overrides = []): TestResponse
     {
         return $this->postJson(route('api.auth.signup.store'), array_merge([
             'email' => 'user@mail.com',
@@ -30,7 +30,7 @@ trait AuthRequests
      * @param array $overrides
      * @return TestResponse
      */
-    private function signIn(array $overrides = []): TestResponse
+    private function signInRequest(array $overrides = []): TestResponse
     {
         return $this->postJson(route('api.auth.signin.store'), array_merge([
             'email' => 'user@mail.com',
@@ -43,20 +43,9 @@ trait AuthRequests
      *
      * @return TestResponse
      */
-    private function signOut(): TestResponse
+    private function signOutRequest(): TestResponse
     {
         return $this->deleteJson(route('api.auth.signout.destroy'));
-    }
-
-    /**
-     * Get the API token by credentials.
-     *
-     * @param array $credentials
-     * @return string
-     */
-    private function getApiToken(array $credentials): string
-    {
-        return $this->signIn($credentials)->json('api_token');
     }
 
     /**
@@ -65,11 +54,22 @@ trait AuthRequests
      * @param string $apiToken
      * @return TestResponse
      */
-    private function getUser(string $apiToken): TestResponse
+    private function getUserRequest(string $apiToken): TestResponse
     {
         return $this->getJson(route('api.auth.user.index'), [
             'Authorization' => "Bearer {$apiToken}"
         ]);
+    }
+
+    /**
+     * Get the API token by credentials.
+     *
+     * @param array $credentials
+     * @return string
+     */
+    private function apiTokenRequest(array $credentials): string
+    {
+        return $this->signInRequest($credentials)->json('api_token');
     }
 
     /**
@@ -78,7 +78,7 @@ trait AuthRequests
      * @param array $overrides
      * @return TestResponse
      */
-    private function forgotPassword(array $overrides = []): TestResponse
+    private function forgotPasswordRequest(array $overrides = []): TestResponse
     {
         return $this->postJson(route('api.auth.forgotten-password.store'), array_merge([
             'email' => 'user@mail.com'
@@ -91,7 +91,7 @@ trait AuthRequests
      * @param array $overrides
      * @return TestResponse
      */
-    private function resetPassword(array $overrides = []): TestResponse
+    private function resetPasswordRequest(array $overrides = []): TestResponse
     {
         return $this->putJson(route('api.auth.forgotten-password.update'), array_merge([
             'email' => 'user@mail.com',

@@ -17,7 +17,7 @@ class SignInStoreTest extends DatabaseTestCase
     {
         app(UserFactory::class)->withCredentials('user@mail.com', 'secret123')->create();
 
-        $response = $this->signIn([
+        $response = $this->signInRequest([
             'email' => 'user@mail.com',
             'password' => 'secret123',
         ]);
@@ -37,7 +37,7 @@ class SignInStoreTest extends DatabaseTestCase
     {
         app(UserFactory::class)->withCredentials('user@mail.com', 'secret123')->create();
 
-        $response = $this->signIn([
+        $response = $this->signInRequest([
             'email' => 'user@mail.com',
             'password' => 'INVALID_PASSWORD',
         ]);
@@ -52,7 +52,7 @@ class SignInStoreTest extends DatabaseTestCase
 
         $this->be($user);
 
-        $response = $this->signIn([
+        $response = $this->signInRequest([
             'email' => 'user@mail.com',
             'password' => 'secret123',
         ]);
@@ -69,7 +69,7 @@ class SignInStoreTest extends DatabaseTestCase
             ->shouldReceive('generate')
             ->andReturn('secret-api-token');
 
-        $response = $this->signIn([
+        $response = $this->signInRequest([
             'email' => 'user@mail.com',
             'password' => 'secret123',
         ]);
@@ -84,7 +84,7 @@ class SignInStoreTest extends DatabaseTestCase
     {
         foreach ($this->invalidFields() as $field => $values) {
             foreach ($values as $rule => $value) {
-                $response = $this->signIn([$field => $value]);
+                $response = $this->signInRequest([$field => $value]);
                 $this->assertEmpty(User::all(), "Request was processed with the invalid {$field} for the rule {$rule}");
                 $response->assertJsonValidationErrors($field);
                 $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);

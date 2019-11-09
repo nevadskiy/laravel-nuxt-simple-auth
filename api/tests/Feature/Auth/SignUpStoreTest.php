@@ -6,9 +6,6 @@ use App\User;
 use Illuminate\Http\Response;
 use Tests\DatabaseTestCase;
 
-/**
- * TODO: authenticated_user_cannot_register_a_new_account
- */
 class SignUpStoreTest extends DatabaseTestCase
 {
     use AuthRequests;
@@ -16,7 +13,7 @@ class SignUpStoreTest extends DatabaseTestCase
     /** @test */
     public function guests_can_sign_up_with_email_and_password(): void
     {
-        $response = $this->signUp([
+        $response = $this->signUpRequest([
             'email' => 'user@mail.com',
             'password' => 'secret123',
         ]);
@@ -30,7 +27,7 @@ class SignUpStoreTest extends DatabaseTestCase
     /** @test */
     public function api_returns_correct_response_after_success_sign_up(): void
     {
-        $this->signUp(['email' => 'user@mail.com'])
+        $this->signUpRequest(['email' => 'user@mail.com'])
             ->assertJsonStructure([
                 'data' => ['id', 'email']
             ])
@@ -40,11 +37,17 @@ class SignUpStoreTest extends DatabaseTestCase
     }
 
     /** @test */
+    public function authenticated_users_cannot_register_a_new_account(): void
+    {
+        $this->signUpRequest(['email' => 'user@mail.com']);
+    }
+
+    /** @test */
     public function invalid_values_do_not_pass_the_sign_up_validation_process(): void
     {
         foreach ($this->invalidFields() as $field => $values) {
             foreach ($values as $rule => $value) {
-                $response = $this->signUp([$field => $value]);
+                $response = $this->signUpRequest([$field => $value]);
                 $this->assertEmpty(User::all(), "Request was processed with the invalid {$field} for the rule {$rule}");
                 $response->assertJsonValidationErrors($field);
                 $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
@@ -57,7 +60,7 @@ class SignUpStoreTest extends DatabaseTestCase
     {
         factory(User::class)->create(['email' => 'example@mail.com']);
 
-        $response = $this->signUp(['email' => 'example@mail.com']);
+        $response = $this->signUpRequest(['email' => 'example@mail.com']);
 
         $this->assertCount(1, User::all());
         $response->assertJsonValidationErrors('email');

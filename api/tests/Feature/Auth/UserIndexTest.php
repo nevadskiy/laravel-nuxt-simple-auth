@@ -14,8 +14,8 @@ class UserIndexTest extends DatabaseTestCase
     {
         $user = app(UserFactory::class)->withCredentials('user@mail.com', 'secret123')->create();
 
-        $response = $this->getUser(
-            $this->getApiToken([
+        $response = $this->getUserRequest(
+            $this->apiTokenRequest([
                 'email' => 'user@mail.com',
                 'password' => 'secret123',
             ])
@@ -34,7 +34,7 @@ class UserIndexTest extends DatabaseTestCase
     /** @test */
     public function guests_cannot_request_any_information_without_api_token(): void
     {
-        $response = $this->getUser('');
+        $response = $this->getUserRequest('');
 
         $this->assertGuest();
         $response->assertUnauthorized();
@@ -45,12 +45,12 @@ class UserIndexTest extends DatabaseTestCase
     {
         app(UserFactory::class)->withCredentials('user@mail.com', 'secret123')->create();
 
-        $token = $this->getApiToken([
+        $token = $this->apiTokenRequest([
             'email' => 'user@mail.com',
             'password' => 'secret123',
         ]);
 
-        $response = $this->getUser("INVALID{$token}");
+        $response = $this->getUserRequest("INVALID{$token}");
 
         $this->assertGuest();
         $response->assertUnauthorized();

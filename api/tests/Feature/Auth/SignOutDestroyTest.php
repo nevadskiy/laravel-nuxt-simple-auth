@@ -16,7 +16,7 @@ class SignOutDestroyTest extends DatabaseTestCase
         $user = factory(User::class)->create(['api_token' => 'TEST_API_TOKEN']);
         $this->be($user);
 
-        $response = $this->signOut();
+        $response = $this->signOutRequest();
 
         $response->assertStatus(Response::HTTP_NO_CONTENT);
         $this->assertEmpty($user->fresh()->api_token);
@@ -25,6 +25,6 @@ class SignOutDestroyTest extends DatabaseTestCase
     /** @test */
     public function guests_cannot_sign_out(): void
     {
-        $this->signOut()->assertUnauthorized();
+        $this->signOutRequest()->assertUnauthorized();
     }
 }

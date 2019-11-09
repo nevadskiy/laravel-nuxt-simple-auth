@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Auth;
 
+use App\User;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Tests\DatabaseTestCase;
@@ -14,10 +15,14 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
     /** @test */
     public function guests_can_reset_password_with_reset_token(): void
     {
-        app(UserFactory::class)->withCredentials('user@mail.com')->create();
+        $user = factory(User::class)->create([
+            'email' => 'user@mail.com',
+            'password' => 'FORGOTTEN_PASSWORD',
+            'api_token' => 'OLD_API_TOKEN',
+        ]);
 
         $hasher = $this->mockHashCheck('RESET_PASSWORD_TOKEN', 'RESET_PASSWORD_HASH', true);
-        $hasher->shouldReceive('make')->with('NEW_PASSWORD')->andReturn('TEST');
+        $hasher->shouldReceive('make')->with('NEW_PASSWORD')->andReturn('NEW_PASSWORD_HASH');
 
         DB::table('password_resets')->insert([
             'email' => 'user@mail.com',
@@ -25,7 +30,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
             'created_at' => now(),
         ]);
 
-        $response = $this->resetPassword([
+        $response = $this->resetPasswordRequest([
             'email' => 'user@mail.com',
             'password' => 'NEW_PASSWORD',
             'token' => 'RESET_PASSWORD_TOKEN',
@@ -34,6 +39,8 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
         $response->assertOk();
         $response->assertExactJson(['message' => __('passwords.reset')]);
         $this->assertEmpty(DB::table('password_resets')->get());
+        $this->assertEquals('NEW_PASSWORD_HASH', $user->fresh()->password);
+        $this->assertNull($user->fresh()->api_token);
     }
 
     /** @test */
@@ -48,7 +55,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
             'created_at' => now(),
         ]);
 
-        $response = $this->resetPassword([
+        $response = $this->resetPasswordRequest([
             'email' => 'another@mail.com',
             'password' => 'NEW_PASSWORD',
             'token' => 'RESET_PASSWORD_TOKEN',
@@ -72,7 +79,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
             'created_at' => now(),
         ]);
 
-        $response = $this->resetPassword([
+        $response = $this->resetPasswordRequest([
             'email' => 'user@mail.com',
             'password' => 'NEW_PASSWORD',
             'token' => 'INVALID_PASSWORD_TOKEN',
@@ -94,7 +101,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
             'created_at' => now(),
         ]);
 
-        $response = $this->resetPassword([
+        $response = $this->resetPasswordRequest([
             'email' => 'user@mail.com',
             'password' => 'NEW_PASSWORD',
             'token' => 'RESET_PASSWORD_TOKEN',
@@ -109,7 +116,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
     {
         foreach ($this->invalidFields() as $field => $values) {
             foreach ($values as $rule => $value) {
-                $response = $this->resetPassword([$field => $value]);
+                $response = $this->resetPasswordRequest([$field => $value]);
                 $response->assertJsonValidationErrors($field);
                 $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
             }
@@ -145,6 +152,4 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
             ],
         ];
     }
-
-    // TODO: add unit tests for handlers
 }

@@ -9,6 +9,9 @@ use App\User;
 use DomainException;
 use Tests\DatabaseTestCase;
 
+/**
+ * @see Handler
+ */
 class HandlerTest extends DatabaseTestCase
 {
     /** @test */

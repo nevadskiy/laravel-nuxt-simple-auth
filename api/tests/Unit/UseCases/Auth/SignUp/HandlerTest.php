@@ -10,6 +10,9 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Support\Facades\Event;
 use Tests\DatabaseTestCase;
 
+/**
+ * @see Handler
+ */
 class HandlerTest extends DatabaseTestCase
 {
     /** @test */

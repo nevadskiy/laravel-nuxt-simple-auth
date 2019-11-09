@@ -8,7 +8,10 @@ use Illuminate\Support\Str;
 use Mockery;
 use Tests\DatabaseTestCase;
 
-class HandlerTest extends DatabaseTestCase
+/**
+ * @see RandomTokenGenerator
+ */
+class RandomTokenGeneratorTest extends DatabaseTestCase
 {
     /** @test */
     public function it_generates_long_api_tokens(): void

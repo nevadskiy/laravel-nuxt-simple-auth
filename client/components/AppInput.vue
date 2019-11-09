@@ -14,7 +14,7 @@
       <slot name="icon" />
     </div>
 
-    <span v-show="hasError" class="text-red-600 text-sm">{{ errors[0] }}</span>
+    <span v-show="hasError" class="inline-block mt-1 text-red-600 text-sm">{{ errors[0] }}</span>
   </div>
 </template>
 

@@ -39,7 +39,12 @@ class SignUpStoreTest extends DatabaseTestCase
     /** @test */
     public function authenticated_users_cannot_register_a_new_account(): void
     {
-        $this->signUpRequest(['email' => 'user@mail.com']);
+        $this->signIn();
+
+        $response = $this->signUpRequest(['email' => 'second@mail.com']);
+
+        $this->assertCount(1, User::all());
+        $response->assertUnauthorized();
     }
 
     /** @test */

@@ -11,6 +11,14 @@ use Symfony\Component\HttpFoundation\Response;
 class SignUpController extends Controller
 {
     /**
+     * SignIUpController constructor.
+     */
+    public function __construct()
+    {
+        $this->middleware('guest');
+    }
+
+    /**
      * Handle a sign up request.
      *
      * @param SignUpStoreRequest $request

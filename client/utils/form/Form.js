@@ -89,32 +89,29 @@ export default class Form {
    * @param callback
    * @returns {Promise<*>}
    */
-  submitUsing (callback) {
-    return new Promise((resolve, reject) => {
-      if (this.isPending) {
-        return reject(new Error('Request is pending...'))
+  async submitUsing (callback) {
+    console.log('form is submitting...')
+
+    if (this.isPending) {
+      throw new Error('Request is pending...')
+    }
+
+    if (this.errors.any()) {
+      throw new Error('Validation errors are not resolved.')
+    }
+
+    this.isPending = true
+
+    try {
+      await callback()
+    } catch (error) {
+      if (error && error.response && error.response.status === VALIDATION_ERROR_STATUS) {
+        this.setErrors(error.response.data.errors)
       }
 
-      if (this.errors.any()) {
-        return reject(new Error('Validation errors are not resolved.'))
-      }
-
-      this.isPending = true
-
-      callback(this.data())
-        .then((response) => {
-          resolve(response.data)
-        })
-        .catch((error) => {
-          if (error.response.status === VALIDATION_ERROR_STATUS) {
-            return this.setErrors(error.response.data.errors)
-          }
-
-          reject(error.response, error)
-        })
-        .finally(() => {
-          this.isPending = false
-        })
-    })
+      throw error
+    } finally {
+      this.isPending = false
+    }
   }
 }

@@ -1,7 +1,14 @@
 <template>
-  <div class="container">
-    <nuxt-link :to="{ name: 'auth-signin' }">
-      Sign in...
-    </nuxt-link>
+  <div class="justify-center items-center flex">
+    <AppLogo />
   </div>
 </template>
+
+<script>
+import AppLogo from '~/components/AppLogo.vue'
+export default {
+  components: {
+    AppLogo
+  }
+}
+</script>

@@ -16,20 +16,26 @@ export default {
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
     ]
   },
+
   /*
   ** Customize the progress-bar color
   */
   loading: { color: '#fff' },
+
   /*
   ** Global CSS
   */
   css: [
   ],
+
   /*
   ** Plugins to load before mounting the App
   */
   plugins: [
+    '~/plugins/axios',
+    '~/plugins/auth'
   ],
+
   /*
   ** Nuxt.js dev-modules
   */
@@ -38,19 +44,22 @@ export default {
     '@nuxtjs/tailwindcss',
     '@nuxtjs/dotenv'
   ],
+
   /*
   ** Nuxt.js modules
   */
   modules: [
-    // Doc: https://axios.nuxtjs.org/usage
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    ['cookie-universal-nuxt', { alias: 'cookie' }]
   ],
+
   /*
   ** Axios module configuration
   ** See https://axios.nuxtjs.org/options
   */
   axios: {
   },
+
   /*
   ** Build configuration
   */

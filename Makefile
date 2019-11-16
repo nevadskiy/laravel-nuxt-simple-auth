@@ -124,6 +124,10 @@ test:
 coverage:
 	docker-compose exec php-cli vendor/bin/phpunit --coverage-html tests/report
 
+# Run phpunit tests
+dusk:
+	docker-compose exec php-cli php artisan dusk
+
 
 #-----------------------------------------------------------
 # Dependencies
@@ -139,6 +143,14 @@ yarn-update:
 	docker-compose exec node-cli yarn update
 
 dependencies-update: composer-update yarn-update
+
+yarn-outdated:
+	docker-compose exec yarn outdated
+
+composer-outdated:
+	docker-compose exec yarn outdated
+
+deps-outdated: yarn-update composer-outdated
 
 
 #-----------------------------------------------------------
@@ -181,13 +193,16 @@ autoload:
 # Install the environment
 install: build composer-install env-api env-client key permissions rn
 
+
 #-----------------------------------------------------------
 # Git commands
 #-----------------------------------------------------------
 
-git-undo:
+# Git commit undo
+gc-undo:
 	git reset --soft HEAD~1
 
-git-wip:
+# Git commit 'WIP'
+gc-wip:
 	git add .
 	git commit -m "WIP"

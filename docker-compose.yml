@@ -129,7 +129,16 @@ services:
       - postgres
       - redis
       - mailhog
+      - selenium
     tty: true
+
+  ### Selenium for testing browser behaviour ######
+  selenium:
+    build:
+      context: docker/selenium
+      dockerfile: Dockerfile
+    links:
+      - nginx
 
 ######### Volumes ###################################
 

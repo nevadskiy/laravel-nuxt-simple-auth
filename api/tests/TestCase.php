@@ -2,33 +2,27 @@
 
 namespace Tests;
 
-use Illuminate\Contracts\Hashing\Hasher;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\TestCase as BaseTestCase;
-use Mockery\MockInterface;
 
 abstract class TestCase extends BaseTestCase
 {
     use CreatesApplication;
 
     /**
-     * Mock the hasher.
+     * Freeze time.
      *
-     * @param string $raw
-     * @param string $hash
-     * @param bool $result
-     * @return Hasher|MockInterface
+     * @return Carbon
      */
-    protected function mockHashCheck(string $raw = 'password', string $hash = 'hash', bool $result = true)
+    protected function freezeTime(): Carbon
     {
-        $hasher = $this->mock(Hasher::class)
-            ->shouldReceive('check')
-            ->once()
-            ->with($raw, $hash)
-            ->andReturn($result)
-            ->getMock();
+        // Allows to use this time in comparing with database time.
+        $time = Carbon::createFromTimestamp(
+            Carbon::now()->getTimestamp()
+        );
 
-        $this->app->instance('hash', $hasher);
+        Carbon::setTestNow($time);
 
-        return $hasher;
+        return $time;
     }
 }

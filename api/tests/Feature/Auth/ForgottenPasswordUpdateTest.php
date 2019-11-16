@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\User;
+use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Tests\DatabaseTestCase;
@@ -21,8 +22,10 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
             'api_token' => 'OLD_API_TOKEN',
         ]);
 
-        $hasher = $this->mockHashCheck('RESET_PASSWORD_TOKEN', 'RESET_PASSWORD_HASH', true);
+        $hasher = $this->mock(Hasher::class);
+        $hasher->shouldReceive('check')->with('RESET_PASSWORD_TOKEN', 'RESET_PASSWORD_HASH')->andReturn(true);
         $hasher->shouldReceive('make')->with('NEW_PASSWORD')->andReturn('NEW_PASSWORD_HASH');
+        $this->app->instance('hash', $hasher);
 
         DB::table('password_resets')->insert([
             'email' => 'user@mail.com',
@@ -70,8 +73,10 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
     {
         app(UserFactory::class)->withCredentials('user@mail.com')->create();
 
-        $hasher = $this->mockHashCheck('INVALID_PASSWORD_TOKEN', 'RESET_PASSWORD_HASH', false);
+        $hasher = $this->mock(Hasher::class);
+        $hasher->shouldReceive('check')->with('INVALID_PASSWORD_TOKEN', 'RESET_PASSWORD_HASH')->andReturn(false);
         $hasher->shouldNotReceive('make');
+        $this->app->instance('hash', $hasher);
 
         DB::table('password_resets')->insert([
             'email' => 'user@mail.com',

@@ -1,7 +1,5 @@
 import Errors from './Errors'
 
-const VALIDATION_ERROR_STATUS = 422
-
 export default class Form {
   /**
    * Form constructor.
@@ -105,7 +103,7 @@ export default class Form {
     try {
       await callback()
     } catch (error) {
-      if (error && error.response && error.response.status === VALIDATION_ERROR_STATUS) {
+      if (this.isValidationError(error)) {
         this.setErrors(error.response.data.errors)
       }
 
@@ -113,5 +111,13 @@ export default class Form {
     } finally {
       this.isPending = false
     }
+  }
+
+  isValidationError (error) {
+    return error &&
+      error.response &&
+      error.response.data &&
+      error.response.data.errors &&
+      error.response.data.message === 'The given data was invalid.'
   }
 }

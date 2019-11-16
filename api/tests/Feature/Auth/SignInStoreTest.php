@@ -2,8 +2,9 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Services\Auth\ApiTokenGenerator;
+use App\Services\Auth\TokenGenerator\ApiTokenGenerator;
 use App\User;
+use Carbon\Carbon;
 use Illuminate\Http\Response;
 use Tests\DatabaseTestCase;
 use Tests\Factory\UserFactory;
@@ -61,7 +62,7 @@ class SignInStoreTest extends DatabaseTestCase
     }
 
     /** @test */
-    public function api_returns_correct_response_after_success_sign_up(): void
+    public function api_returns_correct_response_after_success_sign_in(): void
     {
         app(UserFactory::class)->withCredentials('user@mail.com', 'secret123')->create();
 
@@ -90,6 +91,26 @@ class SignInStoreTest extends DatabaseTestCase
                 $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
             }
         }
+    }
+
+    /** @test */
+    public function failed_attempts_in_a_row_lock_the_sign_in_action_to_prevent_brute_force(): void
+    {
+        Carbon::setTestNow(now());
+
+        config(['auth.sign_in.rate_limiter.max_attempts' => 3]);
+        config(['auth.sign_in.rate_limiter.seconds' => 55]);
+
+        $failedResponse1 = $this->signInRequest(['email' => 'admin@mail.com']);
+        $failedResponse2 = $this->signInRequest(['email' => 'admin@mail.com']);
+        $failedResponse3 = $this->signInRequest(['email' => 'admin@mail.com']);
+        $lockedResponse = $this->signInRequest(['email' => 'admin@mail.com']);
+
+        $failedResponse1->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $failedResponse2->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $failedResponse3->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
+        $lockedResponse->assertStatus(Response::HTTP_TOO_MANY_REQUESTS);
+        $lockedResponse->assertJsonValidationErrors(['email' => __('auth.throttle', ['seconds' => 55])]);
     }
 
     /**

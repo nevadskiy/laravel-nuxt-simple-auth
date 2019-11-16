@@ -2,16 +2,19 @@
 
 namespace App\UseCases\Auth\SignIn;
 
-use App\Services\Auth\ApiTokenGenerator;
+use App\Services\Auth\TokenGenerator\ApiTokenGenerator;
+use App\Services\RateLimiter\RateLimiter;
 use App\User;
+use Carbon\CarbonInterval;
 use DomainException;
 use Illuminate\Auth\Events\Authenticated;
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\UserProvider;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class Handler
 {
-    // TODO: add rate limiter
 
     /**
      * @var UserProvider
@@ -24,15 +27,34 @@ class Handler
     private $generator;
 
     /**
+     * @var RateLimiter
+     */
+    private $limiter;
+
+    /**
+     * @var Request
+     */
+    private $request;
+
+    /**
      * Handler constructor.
      *
      * @param UserProvider $provider
      * @param ApiTokenGenerator $generator
+     * @param RateLimiter $limiter
+     * @param Request $request
      */
-    public function __construct(UserProvider $provider, ApiTokenGenerator $generator)
+    public function __construct(
+        UserProvider $provider,
+        ApiTokenGenerator $generator,
+        RateLimiter $limiter,
+        Request $request
+    )
     {
         $this->provider = $provider;
         $this->generator = $generator;
+        $this->limiter = $limiter;
+        $this->request = $request;
     }
 
     /**
@@ -42,6 +64,24 @@ class Handler
      * @return User
      */
     public function handle(Command $command): User
+    {
+        return $this->limiter->limit(
+            $this->getThrottleKey($command->email),
+            config('auth.sign_in.rate_limiter.max_attempts'),
+            CarbonInterval::seconds(config('auth.sign_in.rate_limiter.seconds')),
+            function () use ($command) {
+                return $this->signIn($command);
+            }
+        );
+    }
+
+    /**
+     * Handle the sign in use case.
+     *
+     * @param Command $command
+     * @return User
+     */
+    public function signIn(Command $command): User
     {
         $user = $this->findUser($command);
 
@@ -82,10 +122,21 @@ class Handler
     /**
      * Generate a token for the given user.
      *
-     * @param User|null $user
+     * @param User $user
      */
-    private function generateToken(?User $user): void
+    private function generateToken(User $user): void
     {
         $user->update(['api_token' => $this->generator->generate()]);
+    }
+
+    /**
+     * Get the throttle key for the given request.
+     *
+     * @param string $email
+     * @return string
+     */
+    private function getThrottleKey(string $email): string
+    {
+        return Str::lower("{$email}|{$this->request->ip()}");
     }
 }

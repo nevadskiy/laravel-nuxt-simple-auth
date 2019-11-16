@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\SignInStoreRequest;
+use App\Services\RateLimiter\LockoutException;
 use App\UseCases\Auth\SignIn\Handler;
 use DomainException;
 use Illuminate\Http\Response;
@@ -31,6 +32,11 @@ class SignInController extends Controller
     {
         try {
             $user = $handler->handle($request->toCommand());
+        } catch (LockoutException $e) {
+            throw ValidationException::withMessages([
+                'email' => __('auth.throttle', ['seconds' => now()->diffInSeconds($e->getUnlockTime())])
+            ])
+                ->status(Response::HTTP_TOO_MANY_REQUESTS);
         } catch (DomainException $e) {
             throw ValidationException::withMessages(['email' => $e->getMessage()]);
         }

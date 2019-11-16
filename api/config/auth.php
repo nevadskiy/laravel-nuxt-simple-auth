@@ -48,6 +48,13 @@ return [
         ],
     ],
 
+    'sign_in' => [
+        'rate_limiter' => [
+            'max_attempts' => 5,
+            'seconds' => 60,
+        ],
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | User Providers
@@ -70,11 +77,6 @@ return [
             'driver' => 'eloquent',
             'model' => App\User::class,
         ],
-
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
 
         'api' => [
             'driver' => 'api',

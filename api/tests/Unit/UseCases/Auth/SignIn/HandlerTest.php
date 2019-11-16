@@ -3,9 +3,12 @@
 namespace Tests\Feature\Auth\SignIn;
 
 use App\Services\Auth\TokenGenerator\ApiTokenGenerator;
+use App\Services\RateLimiter\RateLimiter;
 use App\UseCases\Auth\SignIn\Command;
 use App\UseCases\Auth\SignIn\Handler;
 use App\User;
+use Carbon\CarbonInterval;
+use DateInterval;
 use DomainException;
 use Illuminate\Contracts\Hashing\Hasher;
 use Tests\DatabaseTestCase;
@@ -108,5 +111,33 @@ class HandlerTest extends DatabaseTestCase
         } catch (DomainException $e) {
             $spy->shouldNotHaveReceived('generate');
         }
+    }
+
+    /** @test */
+    public function it_uses_rate_limiter_for_sign_in_process(): void
+    {
+        $this->freezeTime();
+
+        config(['auth.sign_in.rate_limiter.max_attempts' => 3]);
+        config(['auth.sign_in.rate_limiter.seconds' => 40]);
+
+        $user = factory(User::class)->create([
+            'email' => 'user@mail.com',
+            'password' => 'database.password',
+        ]);
+
+        $hasher = $this->app->instance('hash', $this->mock(Hasher::class));
+        $hasher->shouldReceive('check')->with('password', 'database.password')->andReturn(true);
+
+        $this->mock(RateLimiter::class)
+            ->shouldReceive('limit')
+            ->andReturnUsing(function (string $key, int $attempts, DateInterval $timeout, callable $callback) {
+                $this->assertEquals('user@mail.com|127.0.0.1', $key);
+                $this->assertEquals(3, $attempts);
+                $this->assertEquals(CarbonInterval::second(40), $timeout);
+                return $callback();
+            });
+
+        $this->assertTrue($user->is(app(Handler::class)->handle(new Command('user@mail.com', 'password'))));
     }
 }

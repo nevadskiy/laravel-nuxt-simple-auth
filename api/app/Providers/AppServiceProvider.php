@@ -2,11 +2,10 @@
 
 namespace App\Providers;
 
-use App\Services\Auth\ApiTokenGenerator;
-use App\Services\Auth\RandomTokenGenerator;
+use App\Services\Auth\TokenGenerator;
 use App\UseCases\Auth\SignIn\Handler;
+use Illuminate\Contracts\Auth\UserProvider;
 use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -18,11 +17,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(ApiTokenGenerator::class, RandomTokenGenerator::class);
+        $this->app->bind(TokenGenerator\ApiTokenGenerator::class, TokenGenerator\RandomTokenGenerator::class);
 
-        $this->app->bind(Handler::class, function (Application $app) {
-            return new Handler(Auth::guard()->getProvider(), $app[ApiTokenGenerator::class]);
-        });
+        $this->app->when(Handler::class)
+            ->needs(UserProvider::class)
+            ->give(function (Application $app) {
+                return $app['auth']->guard()->getProvider();
+            });
     }
 
     /**

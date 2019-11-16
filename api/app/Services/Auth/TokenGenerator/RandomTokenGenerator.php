@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Auth;
+namespace App\Services\Auth\TokenGenerator;
 
 use Illuminate\Contracts\Auth\Guard;
 use Illuminate\Support\Str;

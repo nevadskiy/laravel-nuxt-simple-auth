@@ -2,11 +2,12 @@
 
 namespace Tests\Feature\Auth\SignIn;
 
-use App\Services\Auth\ApiTokenGenerator;
+use App\Services\Auth\TokenGenerator\ApiTokenGenerator;
 use App\UseCases\Auth\SignIn\Command;
 use App\UseCases\Auth\SignIn\Handler;
 use App\User;
 use DomainException;
+use Illuminate\Contracts\Hashing\Hasher;
 use Tests\DatabaseTestCase;
 
 /**
@@ -22,7 +23,14 @@ class HandlerTest extends DatabaseTestCase
             'password' => 'database.password',
         ]);
 
-        $this->mockHashCheck('request.password', 'database.password', true);
+        $hasher = $this->mock(Hasher::class)
+            ->shouldReceive('check')
+            ->once()
+            ->with('request.password', 'database.password')
+            ->andReturn(true)
+            ->getMock();
+
+        $this->app->instance('hash', $hasher);
 
         $command = new Command('user@mail.com', 'request.password');
 
@@ -39,7 +47,14 @@ class HandlerTest extends DatabaseTestCase
             'password' => 'database.password',
         ]);
 
-        $this->mockHashCheck('request.password', 'database.password', true);
+        $hasher = $this->mock(Hasher::class)
+            ->shouldReceive('check')
+            ->once()
+            ->with('request.password', 'database.password')
+            ->andReturn(true)
+            ->getMock();
+
+        $this->app->instance('hash', $hasher);
 
         $this->mock(ApiTokenGenerator::class)
             ->shouldReceive('generate')
@@ -74,7 +89,14 @@ class HandlerTest extends DatabaseTestCase
             'password' => 'database.password',
         ]);
 
-        $this->mockHashCheck('password', 'database.password', false);
+        $hasher = $this->mock(Hasher::class)
+            ->shouldReceive('check')
+            ->once()
+            ->with('password', 'database.password')
+            ->andReturn(false)
+            ->getMock();
+
+        $this->app->instance('hash', $hasher);
 
         $command = new Command('user@mail.com', 'password');
 

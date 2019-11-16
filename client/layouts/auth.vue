@@ -1,6 +1,6 @@
 <template>
   <div class="h-full antialiased bg-blue-300 text-gray-800 bg-page-gradient">
-    <div class="mx-auto container h-full p-4 flex flex-col">
+    <div class="container mx-auto px-4 h-full py-5 flex flex-col">
       <nuxt class="flex-1" />
     </div>
   </div>

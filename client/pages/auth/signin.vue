@@ -45,11 +45,15 @@
           </svg>
         </AppInput>
 
-        <nuxt-link :to="{ name: 'auth-reset-password' }" class="inline-block mt-2">
+        <nuxt-link :to="{ name: 'auth-password-forgot' }" class="inline-block mt-2">
           Forgot your password?
         </nuxt-link>
 
-        <AppButton class="mt-8 w-full">
+        <AppButton
+          :loading="form.isPending"
+          type="submit"
+          class="mt-8 w-full"
+        >
           Sign in
         </AppButton>
       </form>
@@ -96,8 +100,8 @@ export default {
       try {
         await this.form.submitUsing(async () => {
           await this.$store.dispatch('auth/signin', this.form)
+          this.$router.push({ name: 'index' })
         })
-        this.$router.push({ name: 'index' })
       } catch (e) {
         console.log(e)
       }

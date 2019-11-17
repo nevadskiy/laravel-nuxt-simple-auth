@@ -3,7 +3,7 @@
     :is="tag"
     :to="to"
     class="inline-block py-3 px-4 rounded-full uppercase font-bold text-xs shadow-lg bg-gradient-blue text-gray-100 leading-none focus:outline-none focus:shadow-outline"
-    @click="$emit('click')"
+    v-on="$listeners"
   >
     <slot />
   </component>

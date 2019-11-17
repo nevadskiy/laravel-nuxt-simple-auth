@@ -190,8 +190,8 @@ key:
 autoload:
 	docker-compose exec php-cli composer dump-autoload
 
-# Install the environment
-install: build composer-install env-api env-client key permissions rn
+# Install the app
+install: build composer-install env-api env-client key permissions migrate rn
 
 
 #-----------------------------------------------------------

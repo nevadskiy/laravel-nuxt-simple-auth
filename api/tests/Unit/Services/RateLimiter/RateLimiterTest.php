@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit\Services\Auth\TokenGenerator;
+namespace Tests\Unit\Services\RateLimiter;
 
 use App\Services\RateLimiter\LockoutException;
 use App\Services\RateLimiter\RateLimiter;

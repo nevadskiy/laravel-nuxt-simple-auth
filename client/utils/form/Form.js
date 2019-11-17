@@ -1,5 +1,8 @@
 import Errors from './Errors'
 
+/**
+ * This class helps to handle API validation errors and prevents multiple submitting.
+ */
 export default class Form {
   /**
    * Form constructor.
@@ -101,7 +104,7 @@ export default class Form {
     this.isPending = true
 
     try {
-      await callback()
+      await callback(this.data())
     } catch (error) {
       if (this.isValidationError(error)) {
         this.setErrors(error.response.data.errors)

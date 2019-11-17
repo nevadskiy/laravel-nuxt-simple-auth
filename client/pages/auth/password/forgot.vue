@@ -46,7 +46,7 @@
 
 <script>
 import Form from '~/utils/form/Form'
-import AppAuthCard from '~/components/AppAuthCard.vue'
+import AppAuthCard from '~/components/partials/AppAuthCard.vue'
 import AppInput from '~/components/AppInput.vue'
 import AppButton from '~/components/AppButton.vue'
 

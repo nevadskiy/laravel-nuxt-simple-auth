@@ -1,4 +1,4 @@
-<template>
+<template functional>
   <div class="flex justify-center items-center">
     <AppAuthCard>
       <template v-slot:title>
@@ -19,7 +19,7 @@
 </template>
 
 <script>
-import AppAuthCard from '~/components/AppAuthCard.vue'
+import AppAuthCard from '~/components/partials/AppAuthCard.vue'
 import AppButton from '~/components/AppButton.vue'
 
 export default {

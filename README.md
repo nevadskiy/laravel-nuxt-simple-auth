@@ -7,10 +7,10 @@ Simple authentication example with Laravel and Nuxt.JS (no auth packages)
 The app is available with 2 approaches: modular and default (check the master branch)
 
 # Installation
-1. clone the repo
+1. Clone the repo
 
-2. run the install command
+2. Run the install command
 ```
 make install
 ```
-3. go to http://localhost:8080
+3. Open the [http://localhost:8080](http://localhost:8080) url in your browser.

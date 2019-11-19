@@ -12,16 +12,21 @@
          stopOnFailure="false">
     <testsuites>
         <testsuite name="Unit">
-            <directory suffix="Test.php">./tests/Unit</directory>
+            <directory suffix="Test.php">./tests/**/Unit</directory>
         </testsuite>
-
         <testsuite name="Feature">
-            <directory suffix="Test.php">./tests/Feature</directory>
+            <directory suffix="Test.php">./tests/**/Feature</directory>
         </testsuite>
     </testsuites>
     <filter>
         <whitelist processUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">./app</directory>
+            <exclude>
+                <directory suffix=".php">./app/**/Database</directory>
+                <directory suffix=".php">./app/**/Config</directory>
+                <directory suffix=".php">./app/**/Resources</directory>
+                <directory suffix=".php">./app/**/Http/Routes</directory>
+            </exclude>
         </whitelist>
     </filter>
     <php>

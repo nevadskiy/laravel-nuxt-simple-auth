@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use App\User;
+use App\Auth\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 abstract class DatabaseTestCase extends TestCase

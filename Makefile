@@ -46,6 +46,13 @@ remove-volumes:
 prune-networks:
 	docker network prune
 
+# Run terminal of the php container
+php:
+	docker-compose exec php-cli bash
+
+# Run terminal of the node container
+node:
+	docker-compose exec node-cli /bin/sh
 
 #-----------------------------------------------------------
 # Logs
@@ -118,7 +125,11 @@ queue-restart:
 
 # Run phpunit tests
 test:
-	docker-compose exec php-cli vendor/bin/phpunit
+	docker-compose exec php-cli vendor/bin/phpunit --order-by=defects --stop-on-defect
+
+# Run all tests ignoring failures.
+test-all:
+	docker-compose exec php-cli vendor/bin/phpunit --order-by=defects
 
 # Run phpunit tests with coverage
 coverage:
@@ -127,6 +138,10 @@ coverage:
 # Run phpunit tests
 dusk:
 	docker-compose exec php-cli php artisan dusk
+
+# Generate metrics
+metrics:
+	docker-compose exec php-cli vendor/bin/phpmetrics --report-html=api/tests/metrics api/app
 
 
 #-----------------------------------------------------------

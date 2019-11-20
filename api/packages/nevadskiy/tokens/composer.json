@@ -1,0 +1,29 @@
+{
+    "name": "nevadskiy/tokens",
+    "description": "Easy tokens management for Laravel",
+    "license": "MIT",
+    "minimum-stability": "dev",
+    "scripts": {
+        "test": [
+            "./vendor/bin/phpunit --order-by=defects"
+        ]
+    },
+    "autoload": {
+        "psr-4": {
+            "Nevadskiy\\Tokens\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Nevadskiy\\Tokens\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^7.2"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.0",
+        "orchestra/testbench": "^4.0",
+        "mockery/mockery": "^1.2"
+    }
+}

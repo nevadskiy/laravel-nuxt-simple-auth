@@ -2,13 +2,24 @@
 
 namespace Nevadskiy\Tokens\Tests;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Nevadskiy\Tokens\Tests\Support\Factory\TokenFactory;
+use Nevadskiy\Tokens\Tests\Support\Models\User;
+use Nevadskiy\Tokens\TokenManager;
 use Nevadskiy\Tokens\TokenServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 class TestCase extends OrchestraTestCase
 {
+    use RefreshDatabase;
+
+    /**
+     * @var TokenManager
+     */
+    protected $manager;
+
     /**
      * Setup the test environment.
      *
@@ -18,7 +29,15 @@ class TestCase extends OrchestraTestCase
     {
         parent::setUp();
 
-        //
+        config(['app.key' => 'APP_KEY']);
+
+        $this->loadMigrationsFrom(__DIR__.'/Support/Database/Migrations');
+
+        $this->withFactories(__DIR__.'/Support/Database/Factory');
+
+        $this->artisan('migrate', ['--database' => 'testbench'])->run();
+
+        $this->manager = app(TokenManager::class);
     }
     /**
      * Get package providers.
@@ -46,5 +65,43 @@ class TestCase extends OrchestraTestCase
             'database' => ':memory:',
             'prefix' => '',
         ]);
+    }
+
+    /**
+     * Freeze time for tests.
+     *
+     * @param Carbon|null $time
+     * @return Carbon
+     */
+    protected function freezeTime(Carbon $time = null): Carbon
+    {
+        // Allows to use this time when comparing with database time.
+        $time = Carbon::createFromTimestamp(
+            ($time ?: Carbon::now())->getTimestamp()
+        );
+
+        Carbon::setTestNow($time);
+
+        return $time;
+    }
+
+    /**
+     * Create the tokenable entity.
+     *
+     * @return mixed
+     */
+    protected function createTokenableEntity()
+    {
+        return factory(User::class)->create();
+    }
+
+    /**
+     * Get the token factory instance.
+     *
+     * @return TokenFactory
+     */
+    protected function tokenFactory(): TokenFactory
+    {
+        return app(TokenFactory::class);
     }
 }

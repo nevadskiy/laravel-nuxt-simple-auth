@@ -13,7 +13,7 @@ class CreateTokensTable extends Migration
      */
     public function up(): void
     {
-        Schema::create('tokens', function (Blueprint $table) {
+        Schema::create(config('tokens.table'), function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('token');
             $table->string('type', 100);
@@ -34,6 +34,6 @@ class CreateTokensTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tokens');
+        Schema::dropIfExists(config('tokens.table'));
     }
 }

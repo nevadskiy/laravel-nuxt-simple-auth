@@ -18,13 +18,13 @@ class TokenRepository
      */
     public function getByTokenType(string $token, string $type): Token
     {
-        $token = $this->findByTokenType($token, $type);
+        $tokenEntity = $this->findByTokenType($token, $type);
 
-        if (! $token) {
+        if (! $tokenEntity) {
             throw new TokenNotFoundException("Token is not found by '{$token}' and type '{$type}'");
         }
 
-        return $token;
+        return $tokenEntity;
     }
 
     /**

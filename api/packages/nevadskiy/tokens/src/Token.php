@@ -2,129 +2,85 @@
 
 namespace Nevadskiy\Tokens;
 
-use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
+use DateInterval;
+use DateTimeInterface;
 
-/**
- * @property int tokenable_id
- * @property string tokenable_type
- * @property string token
- * @property string type
- * @property Model tokenable
- * @property Carbon expired_at
- * @property Carbon used_at
- */
-class Token extends Model
+interface Token
 {
-    use SoftDeletes;
-
     /**
-     * The attributes that aren't mass assignable.
-     *
-     * @var array
-     */
-    protected $guarded = [];
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = [
-        'used_at',
-        'expired_at',
-    ];
-
-    /**
-     * Create a new Eloquent model instance.
-     *
-     * @param  array  $attributes
-     * @return void
-     */
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-        $this->setTable(config('tokens.table'));
-    }
-
-    /**
-     * Get tokenable model which the token is related to.
-     */
-    public function tokenable(): MorphTo
-    {
-        return $this->morphTo();
-    }
-
-    /**
-     * Fill tokenable attributes according to the given model.
-     *
-     * @param Model $model
-     */
-    public function fillTokenable(Model $model): void
-    {
-        $this->tokenable_id = $model->getKey();
-        $this->tokenable_type = get_class($model);
-    }
-
-    /**
-     * Scope a query to only include active tokens.
-     *
-     * @param Builder $query
-     * @return Builder
-     */
-    public function scopeActive(Builder $query): Builder
-    {
-        return $query->whereNull('used_at')->where('expired_at', '>', now());
-    }
-
-    /**
-     * Continue the token expire date.
-     *
-     * @param Carbon $date
-     */
-    public function continueTo(Carbon $date): void
-    {
-        $this->update(['expired_at' => $date]);
-    }
-
-    /**
-     * Mark the token as used.
-     */
-    public function markAsUsed(): void
-    {
-        $this->update(['used_at' => now()]);
-    }
-
-    /**
-     * Determine if the token is expired already.
-     *
-     * @return bool
-     */
-    public function isExpired(): bool
-    {
-        return $this->expired_at->isPast();
-    }
-
-    /**
-     * Determine if the token is already used.
-     *
-     * @return bool
-     */
-    public function isUsed(): bool
-    {
-        return (bool) $this->used_at;
-    }
-
-    /**
-     * Convert token to the string type.
+     * Get the token name.
      *
      * @return string
      */
-    public function __toString(): string
-    {
-        return $this->token;
-    }
+    public function getName(): string;
+
+    /**
+     * Get the token expiration date.
+     *
+     * @return DateInterval|DateTimeInterface|int
+     */
+    public function getExpirationDate();
+
+    /**
+     * Get the token generation strategy name.
+     *
+     * @return string
+     */
+    public function getGenerationStrategy(): string;
+
+    /**
+     * Determine if the token generation throttling is enabled.
+     *
+     * @return bool
+     */
+    public function isGenerationThrottlingEnabled(): bool;
+
+    /**
+     * Get the key for identifying attempts for throttling limiter on generation process.
+     *
+     * @return string
+     */
+    public function getGenerationLimiterKey(): string;
+
+    /**
+     * Get maximum token generation attempts amount for throttling limiter
+     *
+     * @return int
+     */
+    public function getGenerationAttempts(): int;
+
+    /**
+     * Get the time interval limited generation attempts can be exhausted within.
+     *
+     * @return DateInterval|DateTimeInterface|int
+     */
+    public function getGenerationAttemptsInterval();
+
+    /**
+     * Determine if the token usage throttling is enabled.
+     *
+     * @return bool
+     */
+    public function isUsageThrottlingEnabled(): bool;
+
+    /**
+     * Get the key for identifying attempts for throttling limiter on usage process.
+     *
+     * @return string
+     */
+    public function getUsageLimiterKey(): string;
+
+    /**
+     * Get maximum token usage attempts amount for throttling limiter
+     *
+     * @return int
+     */
+    public function getUsageAttempts(): int;
+
+    /**
+     * Get the time interval limited usage attempts can be exhausted within.
+     *
+     * @return DateInterval|DateTimeInterface|int
+     */
+    public function getUsageAttemptsInterval();
 }

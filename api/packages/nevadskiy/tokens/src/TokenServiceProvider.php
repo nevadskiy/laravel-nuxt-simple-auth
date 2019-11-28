@@ -5,6 +5,7 @@ namespace Nevadskiy\Tokens;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Nevadskiy\Tokens\Generator\RandomHashGenerator;
+use Nevadskiy\Tokens\RateLimiter;
 
 class TokenServiceProvider extends ServiceProvider
 {
@@ -27,7 +28,7 @@ class TokenServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register the application config.
+     * Register any application configurations.
      */
     private function registerConfig(): void
     {
@@ -40,6 +41,8 @@ class TokenServiceProvider extends ServiceProvider
     private function registerDependencies(): void
     {
         $this->app->singleton(TokenManager::class);
+
+        $this->app->singletonIf(RateLimiter\RateLimiterInterface::class, RateLimiter\RateLimiter::class);
 
         $this->app->singletonIf(RandomHashGenerator::class, function (Application $app) {
             return new RandomHashGenerator($app['config']['app']['key']);

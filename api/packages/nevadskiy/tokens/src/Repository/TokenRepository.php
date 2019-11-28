@@ -42,15 +42,14 @@ class TokenRepository
     /**
      * Find an active token for the given model with provided name.
      *
-     * @param Model $model
+     * @param Model $tokenable
      * @param string $name
      * @return TokenEntity|null
      */
-    public function findActiveByNameFor(Model $model, string $name): ?TokenEntity
+    public function findActiveByNameFor(Model $tokenable, string $name): ?TokenEntity
     {
         return TokenEntity::query()
-            ->where('tokenable_id', $model->getKey())
-            ->where('tokenable_type', get_class($model))
+            ->forTokenable($tokenable)
             ->where('name', $name)
             ->active()
             ->first();

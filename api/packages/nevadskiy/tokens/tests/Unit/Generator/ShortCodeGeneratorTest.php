@@ -2,7 +2,6 @@
 
 namespace Nevadskiy\Tokens\Tests\Unit\Generator;
 
-use Nevadskiy\Tokens\Generator\RandomHashGenerator;
 use Nevadskiy\Tokens\Generator\ShortCodeGenerator;
 use Nevadskiy\Tokens\Tests\TestCase;
 

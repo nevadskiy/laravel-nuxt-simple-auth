@@ -4,54 +4,54 @@ namespace Nevadskiy\Tokens\Repository;
 
 use Illuminate\Database\Eloquent\Model;
 use Nevadskiy\Tokens\Exceptions\TokenNotFoundException;
-use Nevadskiy\Tokens\Token;
+use Nevadskiy\Tokens\TokenEntity;
 
 class TokenRepository
 {
     /**
-     * Get the token model by a token string and type.
+     * Get a token entity by a token string and token name.
      *
      * @param string $token
-     * @param string $type
-     * @return Token
+     * @param string $name
+     * @return TokenEntity
      * @throws TokenNotFoundException
      */
-    public function getByTokenType(string $token, string $type): Token
+    public function getByTokenAndName(string $token, string $name): TokenEntity
     {
-        $tokenEntity = $this->findByTokenType($token, $type);
+        $tokenEntity = $this->findByTokenAndName($token, $name);
 
         if (! $tokenEntity) {
-            throw new TokenNotFoundException("Token is not found by '{$token}' and type '{$type}'");
+            throw new TokenNotFoundException("Token is not found by '{$token}' and name '{$name}'");
         }
 
         return $tokenEntity;
     }
 
     /**
-     * Find the token entity a token string and type.
+     * Find a token entity by a token string and token name.
      *
      * @param string $token
-     * @param string $type
-     * @return Token|null
+     * @param string $name
+     * @return TokenEntity|null
      */
-    public function findByTokenType(string $token, string $type): ?Token
+    public function findByTokenAndName(string $token, string $name): ?TokenEntity
     {
-        return Token::where(compact('token', 'type'))->latest('id')->first();
+        return TokenEntity::where(compact('token', 'name'))->latest('id')->first();
     }
 
     /**
-     * Find an active token for the given model with provided type.
+     * Find an active token for the given model with provided name.
      *
      * @param Model $model
-     * @param string $type
-     * @return Token|null
+     * @param string $name
+     * @return TokenEntity|null
      */
-    public function findActiveByTypeFor(Model $model, string $type): ?Token
+    public function findActiveByNameFor(Model $model, string $name): ?TokenEntity
     {
-        return Token::query()
+        return TokenEntity::query()
             ->where('tokenable_id', $model->getKey())
             ->where('tokenable_type', get_class($model))
-            ->where('type', $type)
+            ->where('name', $name)
             ->active()
             ->first();
     }

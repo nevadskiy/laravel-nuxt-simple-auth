@@ -5,7 +5,7 @@ namespace Nevadskiy\Tokens\Tests\Unit\Repository;
 use Nevadskiy\Tokens\Exceptions\TokenNotFoundException;
 use Nevadskiy\Tokens\Repository\TokenRepository;
 use Nevadskiy\Tokens\Tests\TestCase;
-use Nevadskiy\Tokens\Token;
+use Nevadskiy\Tokens\TokenEntity;
 
 /**
  * @see TokenRepository
@@ -13,11 +13,11 @@ use Nevadskiy\Tokens\Token;
 class TokenRepositoryTest extends TestCase
 {
     /** @test */
-    public function it_returns_token_model_by_token_string_and_type(): void
+    public function it_returns_token_model_by_token_string_and_name(): void
     {
-        $token = factory(Token::class)->create(['token' => 'SECRET_TOKEN', 'type' => 'test.type']);
+        $token = factory(TokenEntity::class)->create(['token' => 'SECRET_TOKEN', 'name' => 'test.name']);
 
-        $result = app(TokenRepository::class)->getByTokenType('SECRET_TOKEN', 'test.type');
+        $result = app(TokenRepository::class)->getByTokenAndName('SECRET_TOKEN', 'test.name');
 
         $this->assertTrue($token->is($result));
     }
@@ -25,10 +25,10 @@ class TokenRepositoryTest extends TestCase
     /** @test */
     public function it_returns_the_latest_token(): void
     {
-        $token = factory(Token::class)->create(['token' => 'SECRET_TOKEN', 'type' => 'test.type']);
-        $latestToken = factory(Token::class)->create(['token' => 'SECRET_TOKEN', 'type' => 'test.type']);
+        $token = factory(TokenEntity::class)->create(['token' => 'SECRET_TOKEN', 'name' => 'test.name']);
+        $latestToken = factory(TokenEntity::class)->create(['token' => 'SECRET_TOKEN', 'name' => 'test.name']);
 
-        $result = app(TokenRepository::class)->getByTokenType('SECRET_TOKEN', 'test.type');
+        $result = app(TokenRepository::class)->getByTokenAndName('SECRET_TOKEN', 'test.name');
 
         $this->assertTrue($latestToken->is($result));
     }
@@ -37,29 +37,29 @@ class TokenRepositoryTest extends TestCase
     public function it_throws_an_exception_if_token_is_not_found(): void
     {
         $this->expectException(TokenNotFoundException::class);
-        app(TokenRepository::class)->getByTokenType('SECRET_TOKEN', 'test.type');
+        app(TokenRepository::class)->getByTokenAndName('SECRET_TOKEN', 'test.name');
     }
 
     /** @test */
     public function it_find_tokens_correctly(): void
     {
-        $token1 = factory(Token::class)->create(['token' => 'SECRET_TOKEN', 'type' => 'password.reset']);
-        $token2 = factory(Token::class)->create(['token' => 'SECRET_TOKEN', 'type' => 'magic.link']);
-        $token3 = factory(Token::class)->create(['token' => 'ANOTHER_TOKEN', 'type' => 'password.reset']);
+        $token1 = factory(TokenEntity::class)->create(['token' => 'SECRET_TOKEN', 'name' => 'password.reset']);
+        $token2 = factory(TokenEntity::class)->create(['token' => 'SECRET_TOKEN', 'name' => 'magic.link']);
+        $token3 = factory(TokenEntity::class)->create(['token' => 'ANOTHER_TOKEN', 'name' => 'password.reset']);
 
-        $result = app(TokenRepository::class)->getByTokenType('SECRET_TOKEN', 'magic.link');
+        $result = app(TokenRepository::class)->getByTokenAndName('SECRET_TOKEN', 'magic.link');
 
         $this->assertTrue($token2->is($result));
     }
 
     /** @test */
-    public function it_does_not_find_token_by_wrong_type(): void
+    public function it_does_not_find_token_by_wrong_name(): void
     {
-        factory(Token::class)->create(['token' => 'SECRET_TOKEN', 'type' => 'password.reset']);
+        factory(TokenEntity::class)->create(['token' => 'SECRET_TOKEN', 'name' => 'password.reset']);
 
         $this->expectException(TokenNotFoundException::class);
 
-        app(TokenRepository::class)->getByTokenType('SECRET_TOKEN', 'magic.link');
+        app(TokenRepository::class)->getByTokenAndName('SECRET_TOKEN', 'magic.link');
     }
 
     /** @test */
@@ -67,13 +67,13 @@ class TokenRepositoryTest extends TestCase
     {
         $user = $this->createTokenableEntity();
 
-        $tokenForDifferentModel = $this->tokenFactory()->ofType('verification')->create();
-        $activeToken = $this->tokenFactory()->ofType('verification')->for($user)->create();
-        $expiredToken = $this->tokenFactory()->ofType('verification')->for($user)->expired()->create();
-        $usedToken = $this->tokenFactory()->ofType('verification')->for($user)->used()->create();
-        $anotherToken = $this->tokenFactory()->ofType('password')->for($user)->create();
+        $tokenForDifferentModel = $this->tokenFactory()->withName('verification')->create();
+        $activeToken = $this->tokenFactory()->withName('verification')->for($user)->create();
+        $expiredToken = $this->tokenFactory()->withName('verification')->for($user)->expired()->create();
+        $usedToken = $this->tokenFactory()->withName('verification')->for($user)->used()->create();
+        $anotherToken = $this->tokenFactory()->withName('password')->for($user)->create();
 
-        $token =  app(TokenRepository::class)->findActiveByTypeFor($user, 'verification');
+        $token =  app(TokenRepository::class)->findActiveByNameFor($user, 'verification');
 
         $this->assertTrue($token->is($activeToken));
     }
@@ -83,11 +83,11 @@ class TokenRepositoryTest extends TestCase
     {
         $user = $this->createTokenableEntity();
 
-        $this->tokenFactory()->ofType('password')->for($user)->create();
-        $this->tokenFactory()->ofType('verification')->for($user)->expired()->create();
-        $this->tokenFactory()->ofType('verification')->for($user)->used()->create();
-        $this->tokenFactory()->ofType('verification')->create();
+        $this->tokenFactory()->withName('password')->for($user)->create();
+        $this->tokenFactory()->withName('verification')->for($user)->expired()->create();
+        $this->tokenFactory()->withName('verification')->for($user)->used()->create();
+        $this->tokenFactory()->withName('verification')->create();
 
-        $this->assertNull(app(TokenRepository::class)->findActiveByTypeFor($user, 'verification'));
+        $this->assertNull(app(TokenRepository::class)->findActiveByNameFor($user, 'verification'));
     }
 }

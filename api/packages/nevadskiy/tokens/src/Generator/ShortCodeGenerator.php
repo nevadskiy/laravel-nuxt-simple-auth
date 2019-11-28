@@ -15,7 +15,7 @@ class ShortCodeGenerator implements Generator
     private $pool;
 
     /**
-     * The default pool excludes ambiguous characters [0, O, 1, I].
+     * The default pool which excludes ambiguous characters [0, O, 1, I].
      *
      * @param int $length
      * @param string $pool

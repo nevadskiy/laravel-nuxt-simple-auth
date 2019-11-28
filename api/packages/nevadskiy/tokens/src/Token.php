@@ -23,6 +23,7 @@ interface Token
 
     /**
      * Get the token generation strategy name.
+     * Can be one of ['remove', 'keep', 'reuse'].
      *
      * @return string
      */

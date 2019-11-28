@@ -61,12 +61,11 @@ class TokenEntity extends Model
     /**
      * Fill tokenable attributes according to the given model.
      *
-     * @param Model $model
+     * @param Model $tokenable
      */
-    public function fillTokenable(Model $model): void
+    public function fillTokenable(Model $tokenable): void
     {
-        $this->tokenable_id = $model->getKey();
-        $this->tokenable_type = get_class($model);
+        $this->fill($this->getTokenableAttributes($tokenable));
     }
 
     /**
@@ -78,10 +77,21 @@ class TokenEntity extends Model
      */
     public function scopeForTokenable(Builder $query, Model $tokenable): Builder
     {
-        $query->where('tokenable_id', $tokenable->getKey());
-        $query->where('tokenable_type', get_class($tokenable));
+        return $query->where($this->getTokenableAttributes($tokenable));
+    }
 
-        return $query;
+    /**
+     * Get tokenable attributes of the given model.
+     *
+     * @param Model $tokenable
+     * @return array
+     */
+    protected function getTokenableAttributes(Model $tokenable): array
+    {
+        return [
+            'tokenable_id' => $tokenable->getKey(),
+            'tokenable_type' => get_class($tokenable),
+        ];
     }
 
     /**

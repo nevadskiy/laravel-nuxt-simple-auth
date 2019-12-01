@@ -3,8 +3,22 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | Defined tokens
+    |--------------------------------------------------------------------------
+    */
+
+    'defined' => [
+        //'reset.password' => [
+        //    'ttl' => 60,
+        //    'previous' => 'remove',
+        //],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Default Token Options
     |--------------------------------------------------------------------------
+    |
     | * TTL - is the token time to live in minutes
     | * previous - is the token generation strategy. Can be one of ['remove', 'reuse', 'keep']
     | * generation_throttling - determine if the throttling enabled for the token generation process
@@ -14,7 +28,9 @@ return [
     | * usage_attempts - how many attempts per client are available for usage attempt of the same token type
     | * usage_attempts_interval - the interval which determines how many usage attempts can be process within
     | * generator - the generation class for generating token strings
+    |
     */
+
     'defaults' => [
         'ttl' => 43200, // minutes in month (60 * 24 * 30)
         'previous' => 'remove',
@@ -32,5 +48,6 @@ return [
     | Tokens database table name
     |--------------------------------------------------------------------------
     */
+
     'table' => 'tokens',
 ];

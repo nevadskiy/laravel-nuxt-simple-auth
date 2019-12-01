@@ -14,6 +14,11 @@ class CacheRateLimiter implements RateLimiter
      */
     private $limiter;
 
+    /**
+     * CacheRateLimiter constructor.
+     *
+     * @param BaseRateLimiter $limiter
+     */
     public function __construct(BaseRateLimiter $limiter)
     {
         $this->limiter = $limiter;

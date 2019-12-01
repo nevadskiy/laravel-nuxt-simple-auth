@@ -106,9 +106,8 @@ class CacheRateLimiter implements RateLimiter
     protected function throwLockoutException(string $key): void
     {
         throw LockoutException::withTimeout(
-            Carbon::now()->addSeconds(
-                $this->limiter->availableIn($key)
-            )
+            Carbon::now()->addSeconds($this->limiter->availableIn($key)),
+            'Too many attempts. Please wait before retrying.'
         );
     }
 }

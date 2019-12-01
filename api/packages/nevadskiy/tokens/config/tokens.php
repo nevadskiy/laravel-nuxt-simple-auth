@@ -8,7 +8,7 @@ return [
     */
 
     'defined' => [
-        //'reset.password' => [
+        //'password.reset' => [
         //    'ttl' => 60,
         //    'previous' => 'remove',
         //],

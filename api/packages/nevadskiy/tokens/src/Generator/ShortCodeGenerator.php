@@ -27,7 +27,7 @@ class ShortCodeGenerator implements Generator
     }
 
     /**
-     * Generator
+     * Generate the token string.
      *
      * @return string
      */

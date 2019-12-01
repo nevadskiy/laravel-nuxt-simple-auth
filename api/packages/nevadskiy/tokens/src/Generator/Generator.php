@@ -5,7 +5,7 @@ namespace Nevadskiy\Tokens\Generator;
 interface Generator
 {
     /**
-     * Generate the token
+     * Generate the token string.
      *
      * @return string
      */

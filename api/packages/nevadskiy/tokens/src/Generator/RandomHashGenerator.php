@@ -23,10 +23,9 @@ class RandomHashGenerator implements Generator
     }
 
     /**
-     * Generate the token
+     * Generate the token string.
      *
      * @return string
-     * @throws Exception
      */
     public function generate(): string
     {

@@ -39,7 +39,7 @@ class LockoutException extends TokenException
      * @param string $message
      * @return LockoutException
      */
-    public static function withTimeout(Carbon $timeout = null, string $key = null, string $message = ''): self
+    public static function withTimeout(Carbon $timeout = null, string $message = '', string $key = null): self
     {
         return new static($message, $timeout, $key);
     }

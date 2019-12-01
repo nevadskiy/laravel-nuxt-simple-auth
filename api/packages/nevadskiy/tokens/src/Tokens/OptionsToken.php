@@ -5,10 +5,7 @@ namespace Nevadskiy\Tokens\Tokens;
 use DateInterval;
 use DateTimeInterface;
 use Illuminate\Http\Request;
-use Nevadskiy\Tokens\GenerationLimit;
 use Nevadskiy\Tokens\Generator\Generator;
-use Nevadskiy\Tokens\Token;
-use Nevadskiy\Tokens\UsageLimit;
 use UnexpectedValueException;
 
 class OptionsToken implements Token, GenerationLimit, UsageLimit

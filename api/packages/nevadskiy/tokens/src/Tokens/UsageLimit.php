@@ -1,6 +1,6 @@
 <?php
 
-namespace Nevadskiy\Tokens;
+namespace Nevadskiy\Tokens\Tokens;
 
 use DateInterval;
 use DateTimeInterface;

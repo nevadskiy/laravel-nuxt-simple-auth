@@ -23,7 +23,7 @@ class CreateTokensTable extends Migration
             $table->softDeletes();
             $table->timestamps();
 
-            $table->index(['token', 'type']);
+            $table->index(['token', 'name']);
         });
     }
 

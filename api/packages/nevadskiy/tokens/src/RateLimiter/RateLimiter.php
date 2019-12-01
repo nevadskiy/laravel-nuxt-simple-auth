@@ -5,7 +5,7 @@ namespace Nevadskiy\Tokens\RateLimiter;
 use DateInterval;
 use Nevadskiy\Tokens\Exceptions\LockoutException;
 
-interface RateLimiterInterface
+interface RateLimiter
 {
     /**
      * Handle a callback with rate limiting applied.

@@ -60,6 +60,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->bootMiddlewareAliases();
         $this->bootRoutes();
         $this->bootEvents();
+        $this->bootTranslations();
     }
 
     /**
@@ -135,5 +136,13 @@ class AuthServiceProvider extends ServiceProvider
                 $dispatcher->listen($event, $listener);
             }
         }
+    }
+
+    /**
+     * Boot any module translations.
+     */
+    private function bootTranslations(): void
+    {
+        $this->loadTranslationsFrom(__DIR__ . '/Resources/lang', self::MODULE);
     }
 }

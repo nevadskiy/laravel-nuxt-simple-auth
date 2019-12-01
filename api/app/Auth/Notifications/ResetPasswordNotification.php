@@ -18,10 +18,10 @@ class ResetPasswordNotification extends Notification
     /**
      * Create a notification instance.
      *
-     * @param  string  $token
+     * @param string $token
      * @return void
      */
-    public function __construct($token)
+    public function __construct(string $token)
     {
         $this->token = $token;
     }
@@ -47,7 +47,7 @@ class ResetPasswordNotification extends Notification
             ->subject(__('Reset Password Notification'))
             ->line(__('You are receiving this email because we received a password reset request for your account.'))
             ->action(__('Reset Password'), app(Link::class)->to('/auth/password/reset', ['token' => $this->token]))
-            ->line(__('This password reset link will expire in :count minutes.', ['count' => config('auth.passwords.'.config('auth.defaults.passwords').'.expire')]))
+            ->line(__('This password reset link will expire in :count minutes.', ['count' => config('tokens.defined.password.reset.ttl')]))
             ->line(__('If you did not request a password reset, no further action is required.'));
     }
 }

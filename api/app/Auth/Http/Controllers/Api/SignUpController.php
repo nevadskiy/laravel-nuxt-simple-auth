@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 class SignUpController extends Controller
 {
     /**
-     * SignIUpController constructor.
+     * SignUpController constructor.
      */
     public function __construct()
     {

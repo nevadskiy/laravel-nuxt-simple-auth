@@ -6,6 +6,7 @@ use App\Auth\Notifications\ResetPasswordNotification;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Nevadskiy\Tokens\TokenEntity;
 use Tests\DatabaseTestCase;
 use Tests\Auth\Factory\UserFactory;
 
@@ -22,10 +23,52 @@ class ForgottenPasswordStoreTest extends DatabaseTestCase
 
         $response = $this->forgotPasswordRequest(['email' => 'user@mail.com']);
 
+        $token = TokenEntity::last();
+
+        $token->tokenable->is($user);
         $response->assertCreated();
-        $response->assertExactJson(['message' => __('passwords.sent')]);
-        $this->assertDatabaseHas('password_resets', ['email' => 'user@mail.com']);
-        Notification::assertSentTo($user, ResetPasswordNotification::class);
+        $response->assertExactJson(['message' => __('auth::passwords.forgot.sent')]);
+
+        Notification::assertSentTo(
+            $user,
+            ResetPasswordNotification::class,
+            function (ResetPasswordNotification $notification) use ($token) {
+                return $notification->token === $token->toString();
+            }
+        );
+    }
+
+    /** @test */
+    public function validation_error_occurs_if_guest_tries_reset_password_for_email_that_is_not_registered(): void
+    {
+        Notification::fake();
+
+        $response = $this->forgotPasswordRequest(['email' => 'another@mail.com']);
+
+        $response->assertJsonValidationErrors(['email' => __('auth::passwords.forgot.not_found')]);
+        $this->assertEmpty(TokenEntity::all());
+        Notification::assertNothingSent();
+    }
+
+    /** @test */
+    public function guest_cannot_send_too_many_reset_password_links(): void
+    {
+        app(UserFactory::class)->withCredentials('user@mail.com')->create();
+
+        $response1 = $this->forgotPasswordRequest(['email' => 'user@mail.com']);
+        $response2 = $this->forgotPasswordRequest(['email' => 'user@mail.com']);
+        $response3 = $this->forgotPasswordRequest(['email' => 'user@mail.com']);
+
+        Notification::fake();
+
+        $response = $this->forgotPasswordRequest(['email' => 'user@mail.com']);
+
+        $response1->assertCreated();
+        $response2->assertCreated();
+        $response3->assertCreated();
+
+        $response->assertJsonValidationErrors(['email' => __('auth::passwords.forgot.throttle')]);
+        Notification::assertNothingSent();
     }
 
     /** @test */

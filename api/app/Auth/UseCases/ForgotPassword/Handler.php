@@ -2,24 +2,27 @@
 
 namespace App\Auth\UseCases\ForgotPassword;
 
+use App\Auth\Models\User;
+use App\Auth\Notifications\ResetPasswordNotification;
 use DomainException;
-use Illuminate\Contracts\Auth\PasswordBroker;
+use Nevadskiy\Tokens\Exceptions\LockoutException;
+use Nevadskiy\Tokens\TokenManager;
 
 class Handler
 {
     /**
-     * @var PasswordBroker
+     * @var TokenManager
      */
-    private $broker;
+    private $tokenManager;
 
     /**
      * Handler constructor.
      *
-     * @param PasswordBroker $broker
+     * @param TokenManager $tokenManager
      */
-    public function __construct(PasswordBroker $broker)
+    public function __construct(TokenManager $tokenManager)
     {
-        $this->broker = $broker;
+        $this->tokenManager = $tokenManager;
     }
 
     /**
@@ -27,13 +30,14 @@ class Handler
      *
      * @param Command $command
      * @return void
+     * @throws LockoutException|DomainException
      */
     public function handle(Command $command): void
     {
-        $result = $this->broker->sendResetLink((array) $command);
+        $user = User::where('email', $command->email)->firstOrFail();
 
-        if (PasswordBroker::RESET_LINK_SENT !== $result) {
-            throw new DomainException(__($result));
-        }
+        $token = $this->tokenManager->generateFor($user, 'password.reset');
+
+        $user->notify(new ResetPasswordNotification($token));
     }
 }

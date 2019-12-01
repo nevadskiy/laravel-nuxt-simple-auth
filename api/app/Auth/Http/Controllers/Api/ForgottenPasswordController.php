@@ -8,14 +8,16 @@ use App\Auth\UseCases\ForgotPassword;
 use App\Auth\UseCases\ResetPassword;
 use App\Core\Http\Controllers\Controller;
 use DomainException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
+use Nevadskiy\Tokens\Exceptions\LockoutException;
 
 class ForgottenPasswordController extends Controller
 {
     /**
-     * SignInController constructor.
+     * ForgottenPasswordController constructor.
      */
     public function __construct()
     {
@@ -34,11 +36,13 @@ class ForgottenPasswordController extends Controller
     {
         try {
             $handler->handle($request->toCommand());
-        } catch (DomainException $e) {
-            throw ValidationException::withMessages(['email' => $e->getMessage()]);
+        } catch (ModelNotFoundException $e) {
+            throw ValidationException::withMessages(['email' => __('auth::passwords.forgot.not_found')]);
+        } catch (LockoutException $e) {
+            throw ValidationException::withMessages(['email' => __('auth::passwords.forgot.throttle')]);
         }
 
-        return response()->json(['message' => __('passwords.sent')], Response::HTTP_CREATED);
+        return response()->json(['message' => __('auth::passwords.forgot.sent')], Response::HTTP_CREATED);
     }
 
     /**

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7922dacf764c80e59c08bb4fc3d86c1d",
+    "content-hash": "dd8eed19a988abbbd6668aae7bf475b6",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -908,6 +908,43 @@
                 "time"
             ],
             "time": "2019-10-21T21:32:25+00:00"
+        },
+        {
+            "name": "nevadskiy/tokens",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "packages/nevadskiy/tokens",
+                "reference": "13047020bbe8a50b0882d45da560a07531de86e9"
+            },
+            "require": {
+                "laravel/framework": "~5.8.0|^6.0|^7.0",
+                "nesbot/carbon": "^2.0",
+                "php": "^7.2"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.2",
+                "orchestra/testbench": "^4.0",
+                "phpunit/phpunit": "^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Nevadskiy\\Tokens\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Nevadskiy\\Tokens\\Tests\\": "tests/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Easy tokens management for Laravel",
+            "transport-options": {
+                "symlink": true
+            }
         },
         {
             "name": "nikic/php-parser",
@@ -5061,7 +5098,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "nevadskiy/tokens": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

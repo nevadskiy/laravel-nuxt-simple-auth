@@ -165,6 +165,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Nevadskiy\Tokens\TokenServiceProvider::class,
 
         /*
          * Core Service Providers...

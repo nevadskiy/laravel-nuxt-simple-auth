@@ -15,7 +15,6 @@ use Illuminate\Support\Str;
 
 class Handler
 {
-
     /**
      * @var UserProvider
      */
@@ -91,6 +90,7 @@ class Handler
 
         $this->generateToken($user);
 
+        // TODO: probably swap with guard->auth() method
         event(new Authenticated('api', $user));
 
         return $user;

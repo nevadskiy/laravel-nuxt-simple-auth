@@ -2,8 +2,11 @@
 
 namespace App\Auth\Models;
 
-use App\Auth\Notifications\ResetPasswordNotification;
-use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Auth\Authenticatable;
+use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\Access\Authorizable;
 use Illuminate\Notifications\Notifiable;
 
 /**
@@ -12,9 +15,9 @@ use Illuminate\Notifications\Notifiable;
  * @property string api_token
  * @property string password
  */
-class User extends Authenticatable
+class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
-    use Notifiable;
+    use Authenticatable, Authorizable, Notifiable;
 
     /**
      * Name of the associated database table.
@@ -39,6 +42,7 @@ class User extends Authenticatable
      */
     protected $hidden = [
         'password',
+        'api_token',
     ];
 
     /**
@@ -49,15 +53,4 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    /**
-     * Send the password reset notification.
-     *
-     * @param  string  $token
-     * @return void
-     */
-    public function sendPasswordResetNotification($token): void
-    {
-        $this->notify(new ResetPasswordNotification($token));
-    }
 }

@@ -2,12 +2,34 @@
 
 namespace Nevadskiy\Tokens\Repository;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Nevadskiy\Tokens\Exceptions\TokenNotFoundException;
 use Nevadskiy\Tokens\TokenEntity;
 
 class TokenRepository
 {
+    /**
+     * Create a token entity.
+     *
+     * @param Model $model
+     * @param string $name
+     * @param string $token
+     * @param Carbon $expirationDate
+     * @return TokenEntity
+     */
+    public function createFor(Model $model, string $name, string $token, Carbon $expirationDate): TokenEntity
+    {
+        $tokenEntity = new TokenEntity();
+        $tokenEntity->fillTokenable($model);
+        $tokenEntity->name = $name;
+        $tokenEntity->token = $token;
+        $tokenEntity->expired_at = $expirationDate;
+        $tokenEntity->save();
+
+        return $tokenEntity;
+    }
+
     /**
      * Get a token entity by a token string and token name.
      *

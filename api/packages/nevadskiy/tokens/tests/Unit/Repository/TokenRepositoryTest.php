@@ -90,4 +90,24 @@ class TokenRepositoryTest extends TestCase
 
         $this->assertNull(app(TokenRepository::class)->findActiveByNameFor($user, 'verification'));
     }
+
+    /** @test */
+    public function it_creates_tokens(): void
+    {
+        $this->freezeTime();
+
+        $user = $this->createTokenableEntity();
+
+        app(TokenRepository::class)->createFor($user, 'verification', 'TEST_TOKEN', now()->addDay());
+
+        $this->assertCount(1, TokenEntity::all());
+
+        $this->assertDatabaseHas('tokens', [
+            'tokenable_type' => get_class($user),
+            'tokenable_id' => $user->getKey(),
+            'name' => 'verification',
+            'token' => 'TEST_TOKEN',
+            'expired_at' => now()->addDay(),
+        ]);
+    }
 }

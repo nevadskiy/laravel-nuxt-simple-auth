@@ -2,6 +2,7 @@
 
 namespace Nevadskiy\Tokens;
 
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Nevadskiy\Tokens\Generator\RandomHashGenerator;
@@ -44,7 +45,11 @@ class TokenServiceProvider extends ServiceProvider
     private function registerDependencies(): void
     {
         $this->app->singleton(TokenManager::class, function (Application $app) {
-            $manager = new TokenManager($app[TokenRepository::class], $app[CacheRateLimiter::class]);
+            $manager = new TokenManager(
+                $app[TokenRepository::class],
+                $app[CacheRateLimiter::class],
+                $app[Dispatcher::class]
+            );
 
             foreach ($this->app['config']['tokens']['defined'] as $token => $options) {
                 if (is_int($token)) {

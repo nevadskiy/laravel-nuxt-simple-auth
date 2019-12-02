@@ -6,8 +6,11 @@ use Carbon\Carbon;
 use Carbon\CarbonInterval;
 use DateInterval;
 use DateTimeInterface;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Model;
 use LogicException;
+use Nevadskiy\Tokens\Events\TokenCreated;
+use Nevadskiy\Tokens\Events\TokenUsed;
 use Nevadskiy\Tokens\Exceptions\LockoutException;
 use Nevadskiy\Tokens\Exceptions\TokenAccessException;
 use Nevadskiy\Tokens\Exceptions\TokenAlreadyUsedException;
@@ -41,6 +44,11 @@ class TokenManager
     private $limiter;
 
     /**
+     * @var Dispatcher
+     */
+    private $dispatcher;
+
+    /**
      * @var int
      */
     private $generationAttempts;
@@ -50,13 +58,20 @@ class TokenManager
      *
      * @param TokenRepository $repository
      * @param CacheRateLimiter $limiter
+     * @param Dispatcher $dispatcher
      * @param int $generationAttempts
      */
-    public function __construct(TokenRepository $repository, CacheRateLimiter $limiter, int $generationAttempts = 10)
+    public function __construct(
+        TokenRepository $repository,
+        CacheRateLimiter $limiter,
+        Dispatcher $dispatcher,
+        int $generationAttempts = 10
+    )
     {
         $this->repository = $repository;
         $this->limiter = $limiter;
         $this->generationAttempts = $generationAttempts;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -100,6 +115,20 @@ class TokenManager
             );
         }
 
+        $tokenEntity = $this->generate($model, $token);
+
+        $this->dispatcher->dispatch(new TokenCreated($tokenEntity, $token));
+
+        return $tokenEntity;
+    }
+
+    /**
+     * @param Model $model
+     * @param Token $token
+     * @return TokenEntity
+     */
+    protected function generate(Model $model, Token $token): TokenEntity
+    {
         switch ($token->getGenerationStrategy()) {
             case 'reuse':
                 return $this->generateUsingReuseStrategy($token, $model);
@@ -230,6 +259,8 @@ class TokenManager
         $callback($tokenEntity->tokenable);
 
         $tokenEntity->markAsUsed();
+
+        $this->dispatcher->dispatch(new TokenUsed($tokenEntity, $token));
 
         return $tokenEntity->tokenable;
     }

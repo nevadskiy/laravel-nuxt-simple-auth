@@ -2,6 +2,7 @@
 
 namespace Nevadskiy\Tokens\Tests\Feature;
 
+use Illuminate\Events\Dispatcher;
 use Nevadskiy\Tokens\Generator\RandomHashGenerator;
 use Nevadskiy\Tokens\Generator\ShortCodeGenerator;
 use Nevadskiy\Tokens\RateLimiter\CacheRateLimiter;
@@ -107,7 +108,7 @@ class TokenGenerationTest extends TestCase
 
         $this->tokenFactory()->withName('verification')->create('NOT_UNIQUE_TOKEN');
 
-        $manager = new TokenManager(app(TokenRepository::class), app(CacheRateLimiter::class), 3);
+        $manager = new TokenManager(app(TokenRepository::class), app(CacheRateLimiter::class), app(Dispatcher::class), 3);
 
         $manager->define('verification', [
             'generator' => $generator

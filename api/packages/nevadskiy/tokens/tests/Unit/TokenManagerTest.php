@@ -2,6 +2,9 @@
 
 namespace Nevadskiy\Tokens\Tests\Unit;
 
+use Illuminate\Support\Facades\Event;
+use Nevadskiy\Tokens\Events\TokenCreated;
+use Nevadskiy\Tokens\Events\TokenUsed;
 use Nevadskiy\Tokens\Exceptions\TokenInvalidException;
 use Nevadskiy\Tokens\Generator\RandomHashGenerator;
 use Nevadskiy\Tokens\Repository\TokenRepository;
@@ -149,6 +152,42 @@ class TokenManagerTest extends TestCase
 
         $manager->use(null, 'verification', function () {
             $this->fail('Invalid token was used.');
+        });
+    }
+
+    /** @test */
+    public function it_fires_event_when_token_is_generated(): void
+    {
+        Event::fake();
+
+        $manager = $this->tokenManager();
+
+        $manager->define('verification');
+
+        $token = $manager->generateFor($this->createTokenableEntity(), 'verification');
+
+        Event::assertDispatched(TokenCreated::class, function (TokenCreated $event) use ($token) {
+            return $event->tokenEntity->is($token)
+                && $event->tokenType->getName() === 'verification';
+        });
+    }
+
+    /** @test */
+    public function it_fires_event_when_token_is_used(): void
+    {
+        Event::fake();
+
+        $token = $this->tokenFactory()->withName('verification')->create('SECRET_TOKEN');
+
+        $manager = $this->tokenManager();
+
+        $manager->define('verification');
+
+        $manager->use('SECRET_TOKEN', 'verification', function () {});
+
+        Event::assertDispatched(TokenUsed::class, function (TokenUsed $event) use ($token) {
+            return $event->tokenEntity->is($token)
+                && $event->tokenType->getName() === 'verification';
         });
     }
 }

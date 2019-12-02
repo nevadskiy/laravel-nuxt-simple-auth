@@ -6,6 +6,9 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Nevadskiy\Tokens\Generator\RandomHashGenerator;
 use Nevadskiy\Tokens\RateLimiter;
+use Nevadskiy\Tokens\RateLimiter\CacheRateLimiter;
+use Nevadskiy\Tokens\Repository\TokenRepository;
+use Nevadskiy\Tokens\Tokens\OptionsToken;
 
 class TokenServiceProvider extends ServiceProvider
 {
@@ -40,12 +43,28 @@ class TokenServiceProvider extends ServiceProvider
      */
     private function registerDependencies(): void
     {
-        $this->app->singleton(TokenManager::class);
+        $this->app->singleton(TokenManager::class, function (Application $app) {
+            $manager = new TokenManager($app[TokenRepository::class], $app[CacheRateLimiter::class]);
 
-        $this->app->singletonIf(RateLimiter\RateLimiterInterface::class, RateLimiter\RateLimiter::class);
+            foreach ($this->app['config']['tokens']['defined'] as $token => $options) {
+                if (is_int($token)) {
+                    $manager->define($options);
+                } else {
+                    $manager->define($token, $options);
+                }
+            }
+
+            return $manager;
+        });
+
+        $this->app->singletonIf(RateLimiter\CacheRateLimiter::class, RateLimiter\CacheRateLimiter::class);
 
         $this->app->singletonIf(RandomHashGenerator::class, function (Application $app) {
             return new RandomHashGenerator($app['config']['app']['key']);
+        });
+
+        $this->app->when(OptionsToken::class)->needs('$defaults')->give(function (Application $app) {
+            return $app['config']['tokens']['defaults'];
         });
     }
 

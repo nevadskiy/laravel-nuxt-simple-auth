@@ -16,11 +16,6 @@ class TestCase extends OrchestraTestCase
     use RefreshDatabase;
 
     /**
-     * @var TokenManager
-     */
-    protected $manager;
-
-    /**
      * Setup the test environment.
      *
      * @return void
@@ -36,8 +31,6 @@ class TestCase extends OrchestraTestCase
         $this->withFactories(__DIR__.'/Support/Database/Factory');
 
         $this->artisan('migrate', ['--database' => 'testbench'])->run();
-
-        $this->manager = app(TokenManager::class);
     }
     /**
      * Get package providers.
@@ -103,5 +96,15 @@ class TestCase extends OrchestraTestCase
     protected function tokenFactory(): TokenFactory
     {
         return app(TokenFactory::class);
+    }
+
+    /**
+     * Get the token manager.
+     *
+     * @return TokenManager
+     */
+    protected function tokenManager(): TokenManager
+    {
+        return app(TokenManager::class);
     }
 }

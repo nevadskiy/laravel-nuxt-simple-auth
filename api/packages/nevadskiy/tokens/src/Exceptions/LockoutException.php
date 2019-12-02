@@ -13,35 +13,27 @@ class LockoutException extends TokenException
     private $timeout;
 
     /**
-     * @var string
-     */
-    private $key;
-
-    /**
      * Create a new exception instance.
      *
      * @param string $message
      * @param Carbon $timeout
-     * @param string $key
      */
-    public function __construct(string $message = '', Carbon $timeout = null, string $key = null)
+    public function __construct(string $message = '', Carbon $timeout = null)
     {
         parent::__construct($message);
         $this->timeout = $timeout;
-        $this->key = $key;
     }
 
     /**
      * Static constructor.
      *
      * @param Carbon $timeout
-     * @param string $key
      * @param string $message
      * @return LockoutException
      */
-    public static function withTimeout(Carbon $timeout = null, string $message = '', string $key = null): self
+    public static function withTimeout(Carbon $timeout = null, string $message = ''): self
     {
-        return new static($message, $timeout, $key);
+        return new static($message, $timeout);
     }
 
     /**
@@ -52,15 +44,5 @@ class LockoutException extends TokenException
     public function getUnlockTime(): Carbon
     {
         return $this->timeout;
-    }
-
-    /**
-     * Get the lockout key.
-     *
-     * @return string
-     */
-    public function getKey(): string
-    {
-        return $this->key;
     }
 }

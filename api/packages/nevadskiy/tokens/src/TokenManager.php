@@ -275,7 +275,7 @@ class TokenManager
      * @return Model
      * @throws TokenException
      */
-    public function useFor(string $tokenString, $tokenType, Model $owner, callable $callback): Model
+    public function useFor($tokenString, $tokenType, Model $owner, callable $callback): Model
     {
         return $this->use($tokenString, $tokenType, $callback, $owner);
     }

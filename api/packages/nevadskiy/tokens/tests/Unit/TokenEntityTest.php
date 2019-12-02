@@ -145,4 +145,14 @@ class TokenEntityTest extends TestCase
 
         $this->assertEquals(now()->addMonth(), $token->fresh()->expired_at);
     }
+
+    /** @test */
+    public function it_returns_last_generated_token(): void
+    {
+        $token1 = factory(TokenEntity::class)->create();
+        $token2 = factory(TokenEntity::class)->create();
+        $token3 = factory(TokenEntity::class)->create();
+
+        $this->assertTrue(TokenEntity::last()->is($token3));
+    }
 }

@@ -39,6 +39,16 @@ class TokenEntity extends Model
     ];
 
     /**
+     * Get the last generated token entity.
+     *
+     * @return TokenEntity
+     */
+    public static function last(): self
+    {
+        return self::latest('id')->firstOrFail();
+    }
+
+    /**
      * Create a new Eloquent model instance.
      *
      * @param  array  $attributes
@@ -148,8 +158,18 @@ class TokenEntity extends Model
      *
      * @return string
      */
-    public function __toString(): string
+    public function toString(): string
     {
         return $this->token;
+    }
+
+    /**
+     * Convert the token entity to the string.
+     *
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->toString();
     }
 }

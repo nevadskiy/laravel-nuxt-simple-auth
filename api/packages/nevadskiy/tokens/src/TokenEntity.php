@@ -16,6 +16,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property Model tokenable
  * @property Carbon expired_at
  * @property Carbon used_at
+ * @property Carbon created_at
+ * @property Carbon updated_at
  */
 class TokenEntity extends Model
 {

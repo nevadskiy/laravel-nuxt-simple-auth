@@ -2,9 +2,11 @@
 
 namespace Nevadskiy\Tokens\Tests\Feature;
 
+use Carbon\CarbonInterval;
 use Illuminate\Http\Request;
 use Nevadskiy\Tokens\Exceptions\LockoutException;
 use Nevadskiy\Tokens\Exceptions\TokenNotFoundException;
+use Nevadskiy\Tokens\Tests\Support\Models\User;
 use Nevadskiy\Tokens\Tests\TestCase;
 use Nevadskiy\Tokens\TokenManager;
 use UnexpectedValueException;
@@ -107,10 +109,7 @@ class ThrottlingUsageTest extends TestCase
         }
     }
 
-    /**
-     * @test
-     * @doesNotPerformAssertions
-     */
+    /** @test */
     public function token_usage_throttling_can_be_disabled(): void
     {
         $manager = $this->tokenManager();
@@ -120,7 +119,58 @@ class ThrottlingUsageTest extends TestCase
             'usage_attempts' => 1,
         ]);
 
-        $this->wrongTokenUsageAttempts($manager, 2, 'reset.password', 'WRONG_TOKEN');
+        $user = $this->createTokenableEntity();
+
+        $token = $this->tokenFactory()->withName('reset.password')->for($user)->create('TEST_TOKEN');
+
+        $this->wrongTokenUsageAttempts($manager, 1, 'reset.password', 'WRONG_TOKEN');
+
+        $manager->use('TEST_TOKEN', 'reset.password', function (User $user) {
+            $user->delete();
+        });
+
+        $this->assertNull($user->fresh());
+        $this->assertTrue($token->fresh()->isUsed());
+    }
+
+    /** @test */
+    public function token_usage_throttling_interval_can_be_specified_as_date_interval(): void
+    {
+        $this->freezeTime();
+
+        $manager = $this->tokenManager();
+
+        $manager->define('reset.password', [
+            'usage_throttling' => true,
+            'usage_attempts' => 1,
+            'usage_attempts_interval' => CarbonInterval::month(),
+        ]);
+
+        $this->wrongTokenUsageAttempts($manager, 1, 'reset.password', 'WRONG_TOKEN');
+
+        try {
+            $this->wrongTokenUsageAttempts($manager, 1, 'reset.password', 'WRONG_TOKEN');
+        } catch (LockoutException $e) {
+            $this->assertEquals(now()->addMonth(), $e->getUnlockTime());
+        }
+    }
+
+    /** @test */
+    public function exception_will_be_thrown_for_unknown_interval_format(): void
+    {
+        $this->freezeTime();
+
+        $manager = $this->tokenManager();
+
+        $manager->define('reset.password', [
+            'usage_throttling' => true,
+            'usage_attempts' => 1,
+            'usage_attempts_interval' => ['INVALID_INTERVAL'],
+        ]);
+
+        $this->expectException(UnexpectedValueException::class);
+
+        $this->wrongTokenUsageAttempts($manager, 1, 'reset.password', 'WRONG_TOKEN');
     }
 
     /**

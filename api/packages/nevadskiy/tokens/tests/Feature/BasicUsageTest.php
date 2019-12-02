@@ -78,4 +78,34 @@ class BasicUsageTest extends TestCase
         $this->assertEquals('RESET_HASHED_PASSWORD', $user->fresh()->password);
         $this->assertEquals($now, $token->fresh()->used_at);
     }
+
+    /** @test */
+    public function token_types_can_be_defined_through_configuration(): void
+    {
+        config(['tokens.defined' => [
+            'password.reset' => [
+                'ttl' => 10
+            ]
+        ]]);
+
+        $tokens = $this->tokenManager()->getDefined();
+
+        $this->assertCount(1, $tokens);
+        $this->assertEquals(['ttl' => 10], $tokens['password.reset']);
+    }
+
+    /** @test */
+    public function token_types_can_be_defined_through_configuration_without_options(): void
+    {
+        config(['tokens.defined' => [
+            'password.reset',
+            'verification',
+        ]]);
+
+        $tokens = $this->tokenManager()->getDefined();
+
+        $this->assertCount(2, $tokens);
+        $this->assertArrayHasKey('password.reset', $tokens);
+        $this->assertArrayHasKey('verification', $tokens);
+    }
 }

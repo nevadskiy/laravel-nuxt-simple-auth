@@ -114,7 +114,7 @@ class TokenEntity extends Model
      */
     public function scopeActive(Builder $query): Builder
     {
-        return $query->whereNull('used_at')->where('expired_at', '>', now());
+        return $query->whereNull('used_at')->where('expired_at', '>', $this->freshTimestamp());
     }
 
     /**
@@ -132,7 +132,7 @@ class TokenEntity extends Model
      */
     public function markAsUsed(): void
     {
-        $this->update(['used_at' => now()]);
+        $this->update(['used_at' => $this->freshTimestamp()]);
     }
 
     /**

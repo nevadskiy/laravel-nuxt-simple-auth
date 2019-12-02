@@ -299,10 +299,6 @@ class TokenManager
             return Carbon::now()->addMinutes($ttl);
         }
 
-        if (is_int($ttl) && $ttl > 0) {
-            return Carbon::now()->addMinutes($ttl);
-        }
-
         if ($ttl instanceof DateTimeInterface) {
             $ttl = Carbon::instance($ttl);
         }

@@ -6,14 +6,14 @@ namespace Nevadskiy\Tokens\Tests\Support\Factory;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use Nevadskiy\Tokens\Token;
+use Nevadskiy\Tokens\TokenEntity;
 
 class TokenFactory
 {
     /**
      * @var string
      */
-    private $type;
+    private $name;
 
     /**
      * @var Model
@@ -34,12 +34,12 @@ class TokenFactory
      * Create the token with provided parameters.
      *
      * @param string|null $token
-     * @return Token
+     * @return TokenEntity
      */
-    public function create(string $token = null): Token
+    public function create(string $token = null): TokenEntity
     {
-        $token = factory(Token::class)->make([
-            'type' => $this->type ?: 'verification',
+        $token = factory(TokenEntity::class)->make([
+            'name' => $this->name ?: 'verification',
             'used_at' => null,
             'expired_at' => now()->addMonth(),
             'token' => $token ?: Str::random(10),
@@ -76,14 +76,14 @@ class TokenFactory
     }
 
     /**
-     * Set a token type.
+     * Set a token name.
      *
-     * @param string $type
+     * @param string $name
      * @return $this
      */
-    public function ofType(string $type): self
+    public function withName(string $name): self
     {
-        $this->type = $type;
+        $this->name = $name;
 
         return $this;
     }

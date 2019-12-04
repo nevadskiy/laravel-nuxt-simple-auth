@@ -10,6 +10,7 @@ use Nevadskiy\Tokens\RateLimiter;
 use Nevadskiy\Tokens\RateLimiter\CacheRateLimiter;
 use Nevadskiy\Tokens\Repository\TokenRepository;
 use Nevadskiy\Tokens\Tokens\OptionsToken;
+use Nevadskiy\Tokens\Commands;
 
 class TokenServiceProvider extends ServiceProvider
 {
@@ -29,6 +30,7 @@ class TokenServiceProvider extends ServiceProvider
     {
         $this->bootMigrations();
         $this->bootPublishable();
+        $this->bootCommands();
     }
 
     /**
@@ -86,7 +88,9 @@ class TokenServiceProvider extends ServiceProvider
      */
     private function bootPublishable(): void
     {
-        $this->publishes([$this->getConfigPath() => config_path('tokens.php')], 'tokens-config');
+        if ($this->app->runningInConsole()) {
+            $this->publishes([$this->getConfigPath() => config_path('tokens.php')], 'tokens-config');
+        }
     }
 
     /**
@@ -97,5 +101,17 @@ class TokenServiceProvider extends ServiceProvider
     private function getConfigPath(): string
     {
         return __DIR__ . '/../config/tokens.php';
+    }
+
+    /**
+     * Boot any application commands.
+     */
+    private function bootCommands(): void
+    {
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                Commands\Clear::class,
+            ]);
+        }
     }
 }

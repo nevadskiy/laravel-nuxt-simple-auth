@@ -6,7 +6,6 @@ use Nevadskiy\Tokens\Generator\RandomHashGenerator;
 use Nevadskiy\Tokens\Generator\ShortCodeGenerator;
 use Nevadskiy\Tokens\Tests\TestCase;
 use Nevadskiy\Tokens\TokenEntity;
-use Nevadskiy\Tokens\TokenManager;
 use UnexpectedValueException;
 
 class TokenGeneratorTest extends TestCase

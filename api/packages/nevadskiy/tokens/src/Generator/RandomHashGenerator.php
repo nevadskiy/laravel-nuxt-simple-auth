@@ -2,7 +2,6 @@
 
 namespace Nevadskiy\Tokens\Generator;
 
-use Exception;
 use Illuminate\Support\Str;
 
 class RandomHashGenerator implements Generator

@@ -93,6 +93,20 @@ class TokenEntity extends Model
     }
 
     /**
+     * Scope a query to only include tokens which are already expired, used or removed.
+     *
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeDead(Builder $query): Builder
+    {
+        return $query->withoutGlobalScopes()
+            ->whereNotNull('used_at')
+            ->orWhere('expired_at', '<', $this->freshTimestamp())
+            ->orWhereNotNull('deleted_at');
+    }
+
+    /**
      * Get tokenable attributes of the given model.
      *
      * @param Model $tokenable

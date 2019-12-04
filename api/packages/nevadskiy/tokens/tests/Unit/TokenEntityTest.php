@@ -3,6 +3,7 @@
 namespace Nevadskiy\Tokens\Tests\Unit;
 
 use DateTimeInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Nevadskiy\Tokens\Tests\Support\Models\User;
 use Nevadskiy\Tokens\Tests\TestCase;
 use Nevadskiy\Tokens\TokenEntity;
@@ -154,5 +155,30 @@ class TokenEntityTest extends TestCase
         $token3 = factory(TokenEntity::class)->create();
 
         $this->assertTrue(TokenEntity::last()->is($token3));
+    }
+
+    /** @test */
+    public function it_can_be_scoped_by_dead_tokens(): void
+    {
+        $token1 = factory(TokenEntity::class)->create([
+            'expired_at' => now()->subMinute(),
+        ]);
+
+        $token2 = factory(TokenEntity::class)->create([
+            'used_at' => now()->subHour(),
+        ]);
+
+        $token3 = factory(TokenEntity::class)->create();
+
+        $token4 = factory(TokenEntity::class)->create();
+        $token4->delete();
+
+        /** @var Collection $tokens */
+        $tokens = TokenEntity::dead()->get();
+
+        $this->assertCount(3, $tokens);
+        $this->assertTrue($tokens->contains($token1));
+        $this->assertTrue($tokens->contains($token2));
+        $this->assertTrue($tokens->contains($token4));
     }
 }

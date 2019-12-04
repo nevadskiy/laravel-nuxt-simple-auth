@@ -1,11 +1,11 @@
 <?php
 
-namespace Nevadskiy\Tokens\Commands;
+namespace Nevadskiy\Tokens\Console;
 
 use Illuminate\Console\Command;
 use Nevadskiy\Tokens\TokenEntity;
 
-class Clear extends Command
+class ClearCommand extends Command
 {
     /**
      * The name and signature of the console command.

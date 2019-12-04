@@ -1,6 +1,6 @@
 <?php
 
-namespace Nevadskiy\Tokens\Tests\Feature\Commands;
+namespace Nevadskiy\Tokens\Tests\Feature\Console;
 
 use Nevadskiy\Tokens\Tests\TestCase;
 use Nevadskiy\Tokens\TokenEntity;

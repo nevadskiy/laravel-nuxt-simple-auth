@@ -10,7 +10,7 @@ use Nevadskiy\Tokens\RateLimiter;
 use Nevadskiy\Tokens\RateLimiter\CacheRateLimiter;
 use Nevadskiy\Tokens\Repository\TokenRepository;
 use Nevadskiy\Tokens\Tokens\OptionsToken;
-use Nevadskiy\Tokens\Commands;
+use Nevadskiy\Tokens\Console;
 
 class TokenServiceProvider extends ServiceProvider
 {
@@ -110,7 +110,7 @@ class TokenServiceProvider extends ServiceProvider
     {
         if ($this->app->runningInConsole()) {
             $this->commands([
-                Commands\Clear::class,
+                Console\ClearCommand::class,
             ]);
         }
     }

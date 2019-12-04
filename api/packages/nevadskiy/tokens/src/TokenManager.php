@@ -256,7 +256,9 @@ class TokenManager
         $this->guardUsedToken($tokenEntity);
         $this->guardTokenOwner($tokenEntity->tokenable, $owner);
 
-        $callback($tokenEntity->tokenable);
+        if (false === $callback($tokenEntity->tokenable)) {
+            return $tokenEntity->tokenable;
+        }
 
         $tokenEntity->markAsUsed();
 

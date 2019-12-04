@@ -133,4 +133,24 @@ class TokenUsageTest extends TestCase
             $this->fail('Token was used for another user.');
         });
     }
+
+    /** @test */
+    public function token_will_not_be_marked_as_used_if_callback_returns_false(): void
+    {
+        $user = factory(User::class)->create(['password' => 'FORGOTTEN_PASSWORD']);
+
+        $token = $this->tokenFactory()->withName('reset.password')->for($user)->create('SUPER_SECRET_TOKEN');
+
+        $manager = $this->tokenManager();
+
+        $manager->define('reset.password');
+
+        $manager->use('SUPER_SECRET_TOKEN', 'reset.password', function (User $user) {
+            $user->update(['password' => 'RESET_HASHED_PASSWORD']);
+            return false;
+        });
+
+        $this->assertEquals('RESET_HASHED_PASSWORD', $user->fresh()->password);
+        $this->assertNull($token->fresh()->used_at);
+    }
 }

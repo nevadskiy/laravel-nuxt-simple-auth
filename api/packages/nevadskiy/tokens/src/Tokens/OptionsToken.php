@@ -13,17 +13,17 @@ class OptionsToken implements Token, GenerationLimit, UsageLimit
     /**
      * @var string
      */
-    private $name;
+    protected $name;
 
     /**
      * @var array
      */
-    private $options;
+    protected $options;
 
     /**
      * @var Request
      */
-    private $request;
+    protected $request;
 
     /**
      * OptionsToken constructor.

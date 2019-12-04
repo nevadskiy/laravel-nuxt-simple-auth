@@ -36,22 +36,22 @@ class TokenManager
     /**
      * @var TokenRepository
      */
-    private $repository;
+    protected $repository;
 
     /**
      * @var CacheRateLimiter
      */
-    private $limiter;
+    protected $limiter;
 
     /**
      * @var Dispatcher
      */
-    private $dispatcher;
+    protected $dispatcher;
 
     /**
      * @var int
      */
-    private $generationAttempts;
+    protected $generationAttempts;
 
     /**
      * TokenManager constructor.
@@ -148,7 +148,7 @@ class TokenManager
      * @param Model $model
      * @return TokenEntity
      */
-    private function generateUsingReuseStrategy(Token $token, Model $model): TokenEntity
+    protected function generateUsingReuseStrategy(Token $token, Model $model): TokenEntity
     {
         $tokenEntity = $this->repository->findActiveByNameFor($model, $token->getName());
 
@@ -168,7 +168,7 @@ class TokenManager
      * @param Model $model
      * @return TokenEntity
      */
-    private function generateUsingRemoveStrategy(Token $token, Model $model): TokenEntity
+    protected function generateUsingRemoveStrategy(Token $token, Model $model): TokenEntity
     {
         $tokenEntity = $this->repository->findActiveByNameFor($model, $token->getName());
 
@@ -186,7 +186,7 @@ class TokenManager
      * @param Model $model
      * @return TokenEntity
      */
-    private function generateUsingKeepStrategy(Token $token, Model $model): TokenEntity
+    protected function generateUsingKeepStrategy(Token $token, Model $model): TokenEntity
     {
         return $this->createFreshTokenEntity($token, $model);
     }
@@ -198,7 +198,7 @@ class TokenManager
      * @param Model $model
      * @return TokenEntity
      */
-    private function createFreshTokenEntity(Token $token, Model $model): TokenEntity
+    protected function createFreshTokenEntity(Token $token, Model $model): TokenEntity
     {
         return $this->repository->createFor(
             $model,
@@ -347,7 +347,7 @@ class TokenManager
      * @param Token|string $token
      * @return Token
      */
-    private function resolveToken($token): Token
+    protected function resolveToken($token): Token
     {
         if ($token instanceof Token) {
             return $token;
@@ -363,7 +363,7 @@ class TokenManager
      *
      * @param string $name
      */
-    private function guardUnknownToken(string $name): void
+    protected function guardUnknownToken(string $name): void
     {
         if (! isset($this->tokens[$name])) {
             throw new LogicException("Token with name {$name} is not defined.");
@@ -418,7 +418,7 @@ class TokenManager
      * @param Token|GenerationLimit $token
      * @return CarbonInterval
      */
-    private function getGenerationAttemptsInterval(GenerationLimit $token): CarbonInterval
+    protected function getGenerationAttemptsInterval(GenerationLimit $token): CarbonInterval
     {
         return $this->parseInterval(
             $token->getGenerationAttemptsInterval()
@@ -431,7 +431,7 @@ class TokenManager
      * @param Token|UsageLimit $token
      * @return CarbonInterval
      */
-    private function getUsageAttemptsInterval(UsageLimit $token): CarbonInterval
+    protected function getUsageAttemptsInterval(UsageLimit $token): CarbonInterval
     {
         return $this->parseInterval(
             $token->getUsageAttemptsInterval()
@@ -471,7 +471,7 @@ class TokenManager
      * @param TokenEntity $token
      * @throws TokenExpiredException
      */
-    private function guardExpiredToken(TokenEntity $token): void
+    protected function guardExpiredToken(TokenEntity $token): void
     {
         if ($token->isExpired()) {
             throw TokenExpiredException::fromToken($token);
@@ -484,7 +484,7 @@ class TokenManager
      * @param TokenEntity $token
      * @throws TokenAlreadyUsedException
      */
-    private function guardUsedToken(TokenEntity $token): void
+    protected function guardUsedToken(TokenEntity $token): void
     {
         if ($token->isUsed()) {
             throw TokenAlreadyUsedException::fromToken($token);
@@ -498,7 +498,7 @@ class TokenManager
      * @param Model $tokenable
      * @throws TokenAccessException
      */
-    private function guardTokenOwner(Model $owner, ?Model $tokenable): void
+    protected function guardTokenOwner(Model $owner, ?Model $tokenable): void
     {
         if ($tokenable && $tokenable->isNot($owner)) {
             throw TokenAccessException::fromOwner($owner);
@@ -541,7 +541,7 @@ class TokenManager
      * @param string $token
      * @throws TokenInvalidException
      */
-    private function validateToken($token): void
+    protected function validateToken($token): void
     {
         if (! $token || ! is_string($token) || mb_strlen($token) > 255) {
             throw new TokenInvalidException('Token is not found.');

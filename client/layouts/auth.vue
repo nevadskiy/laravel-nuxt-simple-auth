@@ -1,10 +1,21 @@
 <template>
-  <div class="h-full antialiased bg-blue-300 text-gray-800 bg-page-gradient">
-    <div class="container mx-auto px-4 h-full py-5 flex flex-col">
-      <nuxt class="flex-1" />
+  <div class="h-full font-sans antialiased bg-blue-300 text-gray-800 bg-page-gradient flex flex-col">
+    <AppHeader />
+
+    <div class="flex-1 container mx-auto px-4 py-5">
+      <nuxt class="mt-20" />
     </div>
   </div>
 </template>
+
+<script>
+import AppHeader from '../components/AppHeader.vue'
+export default {
+  components: {
+    AppHeader
+  }
+}
+</script>
 
 <style>
   html,

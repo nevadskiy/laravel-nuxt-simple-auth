@@ -109,7 +109,6 @@ export default class Form {
       if (this.isValidationError(error)) {
         this.setErrors(error.response.data.errors)
       }
-
       throw error
     } finally {
       this.isPending = false

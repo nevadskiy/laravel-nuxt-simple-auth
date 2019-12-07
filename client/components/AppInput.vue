@@ -11,7 +11,9 @@
         @input="update"
       >
 
-      <slot name="icon" />
+      <div class="absolute right-0 mr-4 pointer-events-none">
+        <slot name="icon" />
+      </div>
     </div>
 
     <span v-show="hasError" class="inline-block mt-1 text-red-600 text-sm">{{ errors[0] }}</span>

@@ -23,7 +23,7 @@
         >
           <svg
             slot="icon"
-            class="absolute right-0 mr-4 w-4 h-4 fill-current text-gray-500 pointer-events-none"
+            class="w-4 h-4 fill-current text-gray-500 pointer-events-none"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 395 395"
           >
@@ -45,7 +45,7 @@
         >
           <svg
             slot="icon"
-            class="absolute right-0 mr-4 w-4 h-4 fill-current text-gray-500 pointer-events-none"
+            class="w-4 h-4 fill-current text-gray-500 pointer-events-none"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 512 512"
           >

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-full flex flex-col bg-gray-200 antialiased text-gray-800">
+  <div class="h-full font-sans antialiased flex flex-col bg-gray-200 text-gray-800">
     <AppHeader />
     <nuxt class="flex-1" />
     <AppFooter />

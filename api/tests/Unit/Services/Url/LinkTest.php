@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Core\Unit\Services\Url;
+namespace Tests\Unit\Services\Url;
 
-use App\Core\Services\Url\Link;
+use App\Services\Url\Link;
 use Tests\TestCase;
 
 /**

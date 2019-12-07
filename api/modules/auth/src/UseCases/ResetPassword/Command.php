@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Auth\UseCases\ResetPassword;
+namespace Module\Auth\UseCases\ResetPassword;
 
 class Command
 {
@@ -26,7 +26,7 @@ class Command
      * @param string $password
      * @param string $token
      */
-    public function __construct(string $email, string $password, string $token)
+    public function __construct(string $email, string $password, $token)
     {
         $this->email = $email;
         $this->password = $password;

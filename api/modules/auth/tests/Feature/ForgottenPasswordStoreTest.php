@@ -1,14 +1,13 @@
 <?php
 
-namespace Tests\Auth\Feature;
+namespace Module\Auth\Tests\Feature;
 
-use App\Auth\Notifications\ResetPasswordNotification;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
+use Module\Auth\Notifications\ResetPasswordNotification;
+use Module\Auth\Tests\DatabaseTestCase;
+use Module\Auth\Tests\Factory\UserFactory;
 use Nevadskiy\Tokens\TokenEntity;
-use Tests\DatabaseTestCase;
-use Tests\Auth\Factory\UserFactory;
 
 class ForgottenPasswordStoreTest extends DatabaseTestCase
 {
@@ -27,7 +26,7 @@ class ForgottenPasswordStoreTest extends DatabaseTestCase
 
         $token->tokenable->is($user);
         $response->assertCreated();
-        $response->assertExactJson(['message' => __('auth::passwords.forgot.sent')]);
+        $response->assertExactJson(['message' => __('auth::passwords.sent')]);
 
         Notification::assertSentTo(
             $user,
@@ -45,7 +44,7 @@ class ForgottenPasswordStoreTest extends DatabaseTestCase
 
         $response = $this->forgotPasswordRequest(['email' => 'another@mail.com']);
 
-        $response->assertJsonValidationErrors(['email' => __('auth::passwords.forgot.not_found')]);
+        $response->assertJsonValidationErrors(['email' => __('auth::passwords.not_found')]);
         $this->assertEmpty(TokenEntity::all());
         Notification::assertNothingSent();
     }
@@ -67,7 +66,7 @@ class ForgottenPasswordStoreTest extends DatabaseTestCase
         $response2->assertCreated();
         $response3->assertCreated();
 
-        $response->assertJsonValidationErrors(['email' => __('auth::passwords.forgot.throttle')]);
+        $response->assertJsonValidationErrors(['email' => __('auth::passwords.throttle')]);
         Notification::assertNothingSent();
     }
 
@@ -79,7 +78,7 @@ class ForgottenPasswordStoreTest extends DatabaseTestCase
         $response = $this->forgotPasswordRequest(['email' => 'unknown@mail.com']);
 
         $response->assertJsonValidationErrors('email');
-        $this->assertEmpty(DB::table('password_resets')->get());
+        $this->assertEmpty(TokenEntity::all());
         Notification::assertNothingSent();
     }
 
@@ -104,7 +103,7 @@ class ForgottenPasswordStoreTest extends DatabaseTestCase
 
         foreach ($this->invalidEmails() as $rule => $value) {
             $response = $this->forgotPasswordRequest(['email' => $value]);
-            $this->assertEmpty(DB::table('password_resets')->get(), "Token was generated for invalid email on {$rule}");
+            $this->assertEmpty(TokenEntity::all(), "Token was generated for invalid email on {$rule}");
             $response->assertJsonValidationErrors('email');
             $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
             Notification::assertNothingSent();

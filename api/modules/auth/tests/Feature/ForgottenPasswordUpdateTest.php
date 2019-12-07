@@ -1,13 +1,13 @@
 <?php
 
-namespace Tests\Auth\Feature;
+namespace Module\Auth\Tests\Feature;
 
-use App\Auth\Models\User;
+use Module\Auth\Models\User;
 use Illuminate\Contracts\Hashing\Hasher;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\DB;
-use Tests\DatabaseTestCase;
-use Tests\Auth\Factory\UserFactory;
+use Nevadskiy\Tokens\TokenManager;
+use Module\Auth\Tests\DatabaseTestCase;
+use Module\Auth\Tests\Factory\UserFactory;
 
 class ForgottenPasswordUpdateTest extends DatabaseTestCase
 {
@@ -23,66 +23,72 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
         ]);
 
         $hasher = $this->mock(Hasher::class);
-        $hasher->shouldReceive('check')->with('RESET_PASSWORD_TOKEN', 'RESET_PASSWORD_HASH')->andReturn(true);
         $hasher->shouldReceive('make')->with('NEW_PASSWORD')->andReturn('NEW_PASSWORD_HASH');
         $this->app->instance('hash', $hasher);
 
-        DB::table('password_resets')->insert([
-            'email' => 'user@mail.com',
-            'token' => 'RESET_PASSWORD_HASH',
-            'created_at' => now(),
-        ]);
+        $token = app(TokenManager::class)->generateFor($user, 'password.reset');
 
         $response = $this->resetPasswordRequest([
             'email' => 'user@mail.com',
             'password' => 'NEW_PASSWORD',
-            'token' => 'RESET_PASSWORD_TOKEN',
+            'token' => $token->toString(),
         ]);
 
         $response->assertOk();
-        $response->assertExactJson(['message' => __('passwords.reset')]);
-        $this->assertEmpty(DB::table('password_resets')->get());
+        $response->assertExactJson(['message' => __('auth::passwords.success')]);
         $this->assertEquals('NEW_PASSWORD_HASH', $user->fresh()->password);
+        $this->assertTrue($token->fresh()->isUsed());
         $this->assertNull($user->fresh()->api_token);
     }
 
     /** @test */
-    public function guests_cannot_reset_password_with_another_email(): void
+    public function guests_cannot_reset_password_with_unknown_email(): void
     {
-        app(UserFactory::class)->withCredentials('user@mail.com')->create();
+        $response = $this->resetPasswordRequest([
+            'email' => 'another@mail.com',
+            'password' => 'NEW_PASSWORD',
+            'token' => 'SECRET_TOKEN',
+        ]);
+
+        $response->assertJsonValidationErrors(['email' => __('auth::passwords.not_found')]);
+    }
+
+    /** @test */
+    public function guest_cannot_reset_password_for_another_user(): void
+    {
+        $user = app(UserFactory::class)->withCredentials('user@mail.com')->create();
         app(UserFactory::class)->withCredentials('another@mail.com')->create();
 
-        DB::table('password_resets')->insert([
-            'email' => 'user@mail.com',
-            'token' => 'RESET_PASSWORD_HASH',
-            'created_at' => now(),
-        ]);
+        $token = app(TokenManager::class)->generateFor($user, 'password.reset');
 
         $response = $this->resetPasswordRequest([
             'email' => 'another@mail.com',
             'password' => 'NEW_PASSWORD',
-            'token' => 'RESET_PASSWORD_TOKEN',
+            'token' => $token->toString(),
         ]);
 
-        $response->assertJsonValidationErrors('email');
-        $this->assertCount(1, DB::table('password_resets')->get());
+        $response->assertJsonValidationErrors('token');
+        $this->assertFalse($token->fresh()->isUsed());
     }
 
     /** @test */
-    public function guests_cannot_reset_password_with_invalid_token(): void
+    public function guests_cannot_try_to_reset_password_with_too_many_attempts(): void
     {
         app(UserFactory::class)->withCredentials('user@mail.com')->create();
 
-        $hasher = $this->mock(Hasher::class);
-        $hasher->shouldReceive('check')->with('INVALID_PASSWORD_TOKEN', 'RESET_PASSWORD_HASH')->andReturn(false);
-        $hasher->shouldNotReceive('make');
-        $this->app->instance('hash', $hasher);
+        $responses = [];
 
-        DB::table('password_resets')->insert([
-            'email' => 'user@mail.com',
-            'token' => 'RESET_PASSWORD_HASH',
-            'created_at' => now(),
-        ]);
+        for ($i = 0; $i < 5; $i++) {
+            $responses[] = $this->resetPasswordRequest([
+                'email' => 'user@mail.com',
+                'password' => 'NEW_PASSWORD',
+                'token' => 'INVALID_PASSWORD_TOKEN',
+            ]);
+        }
+
+        foreach ($responses as $response) {
+            $response->assertJsonValidationErrors(['token' => __('auth::passwords.invalid_token')]);
+        }
 
         $response = $this->resetPasswordRequest([
             'email' => 'user@mail.com',
@@ -90,8 +96,24 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
             'token' => 'INVALID_PASSWORD_TOKEN',
         ]);
 
-        $response->assertJsonValidationErrors('email');
-        $this->assertCount(1, DB::table('password_resets')->get());
+        $response->assertJsonValidationErrors(['token' => __('auth::passwords.throttle')]);
+    }
+
+    /** @test */
+    public function guests_cannot_reset_password_with_invalid_token(): void
+    {
+        $user = app(UserFactory::class)->withCredentials('user@mail.com')->create();
+
+        $token = app(TokenManager::class)->generateFor($user, 'password.reset');
+
+        $response = $this->resetPasswordRequest([
+            'email' => 'user@mail.com',
+            'password' => 'NEW_PASSWORD',
+            'token' => 'INVALID_PASSWORD_TOKEN',
+        ]);
+
+        $response->assertJsonValidationErrors(['token' => __('auth::passwords.invalid_token')]);
+        $this->assertFalse($token->fresh()->isUsed());
     }
 
     /** @test */
@@ -100,11 +122,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
         $user = app(UserFactory::class)->withCredentials('user@mail.com')->create();
         $this->be($user);
 
-        DB::table('password_resets')->insert([
-            'email' => 'user@mail.com',
-            'token' => 'RESET_PASSWORD_HASH',
-            'created_at' => now(),
-        ]);
+        $token = app(TokenManager::class)->generateFor($user, 'password.reset');
 
         $response = $this->resetPasswordRequest([
             'email' => 'user@mail.com',
@@ -113,7 +131,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
         ]);
 
         $response->assertUnauthorized();
-        $this->assertCount(1, DB::table('password_resets')->get());
+        $this->assertFalse($token->fresh()->isUsed());
     }
 
     /** @test */

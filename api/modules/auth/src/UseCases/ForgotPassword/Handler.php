@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Auth\UseCases\ForgotPassword;
+namespace Module\Auth\UseCases\ForgotPassword;
 
-use App\Auth\Models\User;
-use App\Auth\Notifications\ResetPasswordNotification;
+use Module\Auth\Models\User;
+use Module\Auth\Notifications\ResetPasswordNotification;
 use DomainException;
 use Nevadskiy\Tokens\Exceptions\LockoutException;
 use Nevadskiy\Tokens\TokenManager;
@@ -34,10 +34,21 @@ class Handler
      */
     public function handle(Command $command): void
     {
-        $user = User::where('email', $command->email)->firstOrFail();
+        $user = $this->getUser($command);
 
         $token = $this->tokenManager->generateFor($user, 'password.reset');
 
         $user->notify(new ResetPasswordNotification($token));
+    }
+
+    /**
+     * Get the user user.
+     *
+     * @param Command $command
+     * @return User
+     */
+    protected function getUser(Command $command): User
+    {
+        return User::where('email', $command->email)->firstOrFail();
     }
 }

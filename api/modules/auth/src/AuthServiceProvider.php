@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Auth;
+namespace Module\Auth;
 
-use App\Auth\Http\Middleware;
-use App\Auth\UseCases\SignIn\Handler;
+use Module\Auth\Http\Middleware;
+use Module\Auth\UseCases\SignIn\Handler;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -11,13 +11,14 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
+use Nevadskiy\Tokens\TokenManager;
 
 class AuthServiceProvider extends ServiceProvider
 {
     /**
      * The module's name.
      */
-    public const MODULE = 'auth';
+    public const NAME = 'auth';
 
     /**
      * The module's route middleware.
@@ -61,6 +62,7 @@ class AuthServiceProvider extends ServiceProvider
         $this->bootRoutes();
         $this->bootEvents();
         $this->bootTranslations();
+        $this->bootTokens();
     }
 
     /**
@@ -68,7 +70,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     private function registerConfig(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/Config/auth.php', self::MODULE);
+        $this->mergeConfigFrom(__DIR__ . '/../config/auth.php', self::NAME);
     }
 
     /**
@@ -88,7 +90,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     private function bootMigrations(): void
     {
-        $this->loadMigrationsFrom(__DIR__ . '/Database/Migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
     }
 
     /**
@@ -97,7 +99,7 @@ class AuthServiceProvider extends ServiceProvider
     private function bootFactories(): void
     {
         if ($this->app->runningInConsole()) {
-            $this->app[Factory::class]->load(__DIR__ . '/Database/Factories');
+            $this->app[Factory::class]->load(__DIR__ . '/../database/factories');
         }
     }
 
@@ -120,7 +122,7 @@ class AuthServiceProvider extends ServiceProvider
             'prefix' => 'api',
             'middleware' => 'api',
         ], function () {
-            $this->loadRoutesFrom(__DIR__ . '/Http/Routes/api.php');
+            $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
         });
     }
 
@@ -143,6 +145,23 @@ class AuthServiceProvider extends ServiceProvider
      */
     private function bootTranslations(): void
     {
-        $this->loadTranslationsFrom(__DIR__ . '/Resources/lang', self::MODULE);
+        $this->loadTranslationsFrom(__DIR__ . '/../resources/lang', self::NAME);
+    }
+
+    /**
+     * Boot any module tokens.
+     */
+    private function bootTokens(): void
+    {
+        $this->app[TokenManager::class]->define('password.reset', [
+            'ttl' => 60,
+            'previous' => 'reuse',
+            'generation_throttling' => true,
+            'generation_attempts' => 3,
+            'generation_attempts_interval' => 10,
+            'usage_throttling' => true,
+            'usage_attempts' => 5,
+            'usage_attempts_interval' => 10,
+        ]);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Auth\UseCases\ForgotPassword;
+namespace Module\Auth\UseCases\ForgotPassword;
 
 class Command
 {

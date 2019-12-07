@@ -1,34 +1,34 @@
 <?php
 
-namespace App\Auth\UseCases\ResetPassword;
+namespace Module\Auth\UseCases\ResetPassword;
 
-use App\Auth\Models\User;
-use DomainException;
+use Module\Auth\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Contracts\Auth\PasswordBroker;
 use Illuminate\Contracts\Hashing\Hasher;
+use Nevadskiy\Tokens\Exceptions\TokenException;
+use Nevadskiy\Tokens\TokenManager;
 
 class Handler
 {
     /**
-     * @var PasswordBroker
+     * @var TokenManager
      */
-    private $broker;
+    protected $tokenManager;
 
     /**
      * @var Hasher
      */
-    private $hasher;
+    protected $hasher;
 
     /**
      * Handler constructor.
      *
-     * @param PasswordBroker $broker
+     * @param TokenManager $tokenManager
      * @param Hasher $hasher
      */
-    public function __construct(PasswordBroker $broker, Hasher $hasher)
+    public function __construct(TokenManager $tokenManager, Hasher $hasher)
     {
-        $this->broker = $broker;
+        $this->tokenManager = $tokenManager;
         $this->hasher = $hasher;
     }
 
@@ -37,20 +37,30 @@ class Handler
      *
      * @param Command $command
      * @return void
+     * @throws TokenException
      */
     public function handle(Command $command): void
     {
-        $result = $this->broker->reset((array) $command, function (User $user, string $password) {
-            $this->setUserPassword($user, $password);
+        $user = $this->getUser($command);
+
+        $this->tokenManager->useFor($command->token, 'password.reset', $user, function (User $user) use ($command) {
+            $this->setUserPassword($user, $command->password);
             $this->clearApiToken($user);
             $user->save();
 
             event(new PasswordReset($user));
         });
+    }
 
-        if (PasswordBroker::PASSWORD_RESET !== $result) {
-            throw new DomainException(__($result));
-        }
+    /**
+     * Get the user.
+     *
+     * @param Command $command
+     * @return User
+     */
+    protected function getUser(Command $command): User
+    {
+        return User::where('email', $command->email)->firstOrFail();
     }
 
     /**

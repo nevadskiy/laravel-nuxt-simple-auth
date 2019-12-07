@@ -96,7 +96,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
             'token' => 'INVALID_PASSWORD_TOKEN',
         ]);
 
-        $response->assertJsonValidationErrors(['token' => __('auth::passwords.throttle')]);
+        $response->assertJsonValidationErrors(['email' => __('auth::passwords.throttle')]);
     }
 
     /** @test */

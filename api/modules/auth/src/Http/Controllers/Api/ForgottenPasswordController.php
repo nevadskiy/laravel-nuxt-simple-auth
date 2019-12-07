@@ -30,7 +30,8 @@ class ForgottenPasswordController
         } catch (ModelNotFoundException $e) {
             throw ValidationException::withMessages(['email' => __('auth::passwords.not_found')]);
         } catch (LockoutException $e) {
-            throw ValidationException::withMessages(['email' => __('auth::passwords.throttle')])->status(Response::HTTP_TOO_MANY_REQUESTS);
+            throw ValidationException::withMessages(['email' => __('auth::passwords.throttle')])
+                ->status(Response::HTTP_TOO_MANY_REQUESTS);
         }
 
         return response()->json(['message' => __('auth::passwords.sent')], Response::HTTP_CREATED);
@@ -51,7 +52,8 @@ class ForgottenPasswordController
         } catch (ModelNotFoundException $e) {
             throw ValidationException::withMessages(['email' => __('auth::passwords.not_found')]);
         } catch (LockoutException $e) {
-            throw ValidationException::withMessages(['token' => __('auth::passwords.throttle')])->status(Response::HTTP_TOO_MANY_REQUESTS);
+            throw ValidationException::withMessages(['email' => __('auth::passwords.throttle')])
+                ->status(Response::HTTP_TOO_MANY_REQUESTS);
         } catch (TokenException $e) {
             throw ValidationException::withMessages(['token' => __('auth::passwords.invalid_token')]);
         }

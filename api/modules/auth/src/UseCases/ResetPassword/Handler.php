@@ -41,15 +41,29 @@ class Handler
      */
     public function handle(Command $command): void
     {
-        $user = $this->getUser($command);
+        $this->tokenManager->useFor(
+            $command->token,
+            'password.reset',
+            $this->getUser($command),
+            function (User $user) use ($command) {
+                $this->reset($user, $command->password);
+            }
+        );
+    }
 
-        $this->tokenManager->useFor($command->token, 'password.reset', $user, function (User $user) use ($command) {
-            $this->setUserPassword($user, $command->password);
-            $this->clearApiToken($user);
-            $user->save();
+    /**
+     * Reset the user password.
+     *
+     * @param User $user
+     * @param string $password
+     */
+    public function reset(User $user, string $password): void
+    {
+        $this->setUserPassword($user, $password);
+        $this->clearApiToken($user);
+        $user->save();
 
-            event(new PasswordReset($user));
-        });
+        event(new PasswordReset($user));
     }
 
     /**

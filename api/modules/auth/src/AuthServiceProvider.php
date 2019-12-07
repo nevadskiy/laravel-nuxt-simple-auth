@@ -2,6 +2,7 @@
 
 namespace Module\Auth;
 
+use Module\Auth\Services\TokenGenerator;
 use Module\Auth\Http\Middleware;
 use Module\Auth\UseCases\SignIn\Handler;
 use Illuminate\Auth\Events\Registered;
@@ -78,6 +79,10 @@ class AuthServiceProvider extends ServiceProvider
      */
     private function registerDependencies(): void
     {
+        $this->app->bind(Link::class, \App\Services\Url\Link::class);
+
+        $this->app->bind(TokenGenerator\ApiTokenGenerator::class, TokenGenerator\RandomTokenGenerator::class);
+
         $this->app->when(Handler::class)
             ->needs(UserProvider::class)
             ->give(function (Application $app) {

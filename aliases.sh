@@ -10,4 +10,6 @@ alias artisan='docker-compose exec --user "$(id -u):$(id -g)" php-cli php artisa
 # Simple testing aliases
 alias test='docker-compose exec php-cli vendor/bin/phpunit'
 alias tf='docker-compose exec php-cli vendor/bin/phpunit --filter'
-alias tfc='docker-compose exec php-cli vendor/bin/phpunit  --coverage-html tests/report --filter'
+alias tfc='docker-compose exec php-cli vendor/bin/phpunit --coverage-html tests/report --filter'
+alias ts='docker-compose exec php-cli vendor/bin/phpunit --testsuite'
+alias tsc='docker-compose exec php-cli vendor/bin/phpunit --coverage-html tests/report --testsuite'

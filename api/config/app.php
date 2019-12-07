@@ -168,18 +168,11 @@ return [
         Nevadskiy\Tokens\TokenServiceProvider::class,
 
         /*
-         * Core Service Providers...
+         * Application Service Providers...
          */
-        App\Core\Providers\AppServiceProvider::class,
-        App\Core\Providers\BroadcastServiceProvider::class,
-        App\Core\Providers\EventServiceProvider::class,
-        App\Core\Providers\RouteServiceProvider::class,
-
-        /*
-         * Module Service Providers...
-         */
-        App\Core\CoreServiceProvider::class,
-        App\Auth\AuthServiceProvider::class,
+        App\Providers\AppServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
     ],
 
     /*

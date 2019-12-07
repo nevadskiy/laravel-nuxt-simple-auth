@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Core\Providers;
+namespace App\Providers;
 
 use App\Auth\Services\TokenGenerator;
-use App\Core\Services\Url\Link;
+use App\Services\Url\Link;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 

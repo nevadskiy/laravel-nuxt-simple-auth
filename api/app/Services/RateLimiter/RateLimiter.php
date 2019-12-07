@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Services\RateLimiter;
+namespace App\Services\RateLimiter;
 
 use DateInterval;
 use Illuminate\Cache\RateLimiter as CacheRateLimiter;

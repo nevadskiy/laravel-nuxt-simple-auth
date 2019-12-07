@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Services\Url;
+namespace App\Services\Url;
 
 class Link
 {

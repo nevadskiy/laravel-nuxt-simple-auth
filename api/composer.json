@@ -12,6 +12,7 @@
         "fideloper/proxy": "^4.0",
         "laravel/framework": "^6.2",
         "laravel/tinker": "^1.0",
+        "module/auth": "*",
         "nevadskiy/tokens": "dev-master",
         "predis/predis": "^1.1"
     },
@@ -38,7 +39,7 @@
             "App\\": "app/"
         },
         "classmap": [
-            "app/Core/Database/Seeds"
+            "database/seeds"
         ]
     },
     "autoload-dev": {
@@ -64,6 +65,13 @@
         {
             "type": "path",
             "url": "packages/nevadskiy/tokens",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
+            "url": "modules/auth",
             "options": {
                 "symlink": true
             }

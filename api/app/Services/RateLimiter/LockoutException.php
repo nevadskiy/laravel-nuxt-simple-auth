@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Services\RateLimiter;
+namespace App\Services\RateLimiter;
 
 use DateTimeInterface;
 use DomainException;

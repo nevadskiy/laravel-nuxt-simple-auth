@@ -82,7 +82,7 @@ class BasicUsageTest extends TestCase
     /** @test */
     public function token_types_can_be_defined_through_configuration(): void
     {
-        config(['tokens.defined' => [
+        config(['tokens.define' => [
             'password.reset' => [
                 'ttl' => 10
             ]
@@ -97,7 +97,7 @@ class BasicUsageTest extends TestCase
     /** @test */
     public function token_types_can_be_defined_through_configuration_without_options(): void
     {
-        config(['tokens.defined' => [
+        config(['tokens.define' => [
             'password.reset',
             'verification',
         ]]);

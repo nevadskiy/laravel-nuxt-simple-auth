@@ -3,11 +3,11 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Defined tokens
+    | Define tokens
     |--------------------------------------------------------------------------
     */
 
-    'defined' => [
+    'define' => [
         //'password.reset' => [
         //    'ttl' => 60,
         //    'previous' => 'remove',
@@ -19,15 +19,15 @@ return [
     | Default Token Options
     |--------------------------------------------------------------------------
     |
-    | * TTL - is the token time to live in minutes
-    | * previous - is the token generation strategy. Can be one of ['remove', 'reuse', 'keep']
-    | * generation_throttling - determine if the throttling enabled for the token generation process
-    | * generation_attempts - how many attempts per client are available for generation attempt of the same token type
-    | * generation_attempts_interval - the interval which determines how many generation attempts can be process within
-    | * usage_throttling - determine if the throttling enabled for the token usage process
-    | * usage_attempts - how many attempts per client are available for usage attempt of the same token type
-    | * usage_attempts_interval - the interval which determines how many usage attempts can be process within
-    | * generator - the generation class for generating token strings
+    | * TTL - Number of minutes how long token is alive.
+    | * previous -  Token generation strategy, when the same token already exists in the database. Can be one of `remove`, `reuse` or `keep`.
+    | * generation_throttling - Determine whether the token should use throttling for the generation process.
+    | * generation_attempts - How many attempts per user are available for generating the same token type.
+    | * generation_attempts_interval - Number of minutes how many generation attempts can be processed within.
+    | * usage_throttling - Determine whether the token should use throttling for the usage process.
+    | * usage_attempts - How many attempts per user are available for using the same token type.
+    | * usage_attempts_interval - Number of minutes how many usage attempts can be processed within.
+    | * generator - A generator class for generation token strings.
     |
     */
 

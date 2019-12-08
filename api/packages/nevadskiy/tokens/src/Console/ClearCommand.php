@@ -27,5 +27,6 @@ class ClearCommand extends Command
     public function handle(): void
     {
         TokenEntity::dead()->forceDelete();
+        $this->info('All dead tokens have been removed.');
     }
 }

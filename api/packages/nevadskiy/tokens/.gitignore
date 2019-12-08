@@ -1,5 +1,6 @@
-/vendor
 /.idea
+/vendor
 /tests/report
 .phpunit.result.cache
 composer.lock
+TODO.md

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "ea70aa5964d5bb4d228ac5b09aabe625",
+    "content-hash": "188363923f5a66ccd5f09f164113cdf5",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -834,10 +834,9 @@
             "dist": {
                 "type": "path",
                 "url": "modules/auth",
-                "reference": "367959612f2c820fbbf47fb0199cda18f7d529a3"
+                "reference": "d6efd074c62e76e128d0de0cd151a46e54ff98d9"
             },
             "require": {
-                "ext-json": "*",
                 "laravel/framework": "^6.2",
                 "nevadskiy/tokens": "dev-master",
                 "php": "^7.2"
@@ -1024,10 +1023,16 @@
         {
             "name": "nevadskiy/tokens",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/nevadskiy/tokens.git",
+                "reference": "b2a8dc6548f308a1835e21a6b511d43451f410c1"
+            },
             "dist": {
-                "type": "path",
-                "url": "packages/nevadskiy/tokens",
-                "reference": "3e5ed462e4b5c0b74e91c63238b6de6924c93ce0"
+                "type": "zip",
+                "url": "https://api.github.com/repos/nevadskiy/tokens/zipball/b2a8dc6548f308a1835e21a6b511d43451f410c1",
+                "reference": "b2a8dc6548f308a1835e21a6b511d43451f410c1",
+                "shasum": ""
             },
             "require": {
                 "hashids/hashids": "^4.0",
@@ -1056,11 +1061,7 @@
                     "Nevadskiy\\Tokens\\": "src/"
                 }
             },
-            "autoload-dev": {
-                "psr-4": {
-                    "Nevadskiy\\Tokens\\Tests\\": "tests/"
-                }
-            },
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -1070,9 +1071,7 @@
                 "token",
                 "tokens"
             ],
-            "transport-options": {
-                "symlink": true
-            }
+            "time": "2019-12-08T19:32:22+00:00"
         },
         {
             "name": "nikic/php-parser",

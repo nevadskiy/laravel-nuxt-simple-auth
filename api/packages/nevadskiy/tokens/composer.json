@@ -29,5 +29,18 @@
         "phpunit/phpunit": "^8.0",
         "orchestra/testbench": "^4.0",
         "mockery/mockery": "^1.2"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Nevadskiy\\Tokens\\TokenServiceProvider"
+            ],
+            "aliases": {
+                "TokenManager": "Nevadskiy\\Tokens\\Facades\\TokenManager"
+            }
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit"
     }
 }

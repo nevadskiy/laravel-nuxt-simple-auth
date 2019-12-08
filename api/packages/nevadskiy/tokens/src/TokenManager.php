@@ -18,6 +18,7 @@ use Nevadskiy\Tokens\Exceptions\TokenException;
 use Nevadskiy\Tokens\Exceptions\TokenExpiredException;
 use Nevadskiy\Tokens\Exceptions\TokenInvalidException;
 use Nevadskiy\Tokens\RateLimiter\CacheRateLimiter;
+use Nevadskiy\Tokens\RateLimiter\RateLimiter;
 use Nevadskiy\Tokens\Repository\TokenRepository;
 use Nevadskiy\Tokens\Tokens\GenerationLimit;
 use Nevadskiy\Tokens\Tokens\OptionsToken;
@@ -57,13 +58,13 @@ class TokenManager
      * TokenManager constructor.
      *
      * @param TokenRepository $repository
-     * @param CacheRateLimiter $limiter
+     * @param RateLimiter $limiter
      * @param Dispatcher $dispatcher
      * @param int $generationAttempts
      */
     public function __construct(
         TokenRepository $repository,
-        CacheRateLimiter $limiter,
+        RateLimiter $limiter,
         Dispatcher $dispatcher,
         int $generationAttempts = 10
     )
@@ -274,12 +275,11 @@ class TokenManager
      * @param Token|string $tokenType
      * @param Model $owner
      * @param callable $callback
-     * @return Model
      * @throws TokenException
      */
-    public function useFor($tokenString, $tokenType, Model $owner, callable $callback): Model
+    public function useFor($tokenString, $tokenType, Model $owner, callable $callback): void
     {
-        return $this->use($tokenString, $tokenType, $callback, $owner);
+        $this->use($tokenString, $tokenType, $callback, $owner);
     }
 
     /**

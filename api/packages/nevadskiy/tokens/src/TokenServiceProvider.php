@@ -2,13 +2,10 @@
 
 namespace Nevadskiy\Tokens;
 
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 use Nevadskiy\Tokens\Generator\RandomHashGenerator;
 use Nevadskiy\Tokens\RateLimiter;
-use Nevadskiy\Tokens\RateLimiter\CacheRateLimiter;
-use Nevadskiy\Tokens\Repository\TokenRepository;
 use Nevadskiy\Tokens\Tokens\OptionsToken;
 use Nevadskiy\Tokens\Console;
 
@@ -46,25 +43,19 @@ class TokenServiceProvider extends ServiceProvider
      */
     private function registerDependencies(): void
     {
-        $this->app->singleton(TokenManager::class, function (Application $app) {
-            $manager = new TokenManager(
-                $app[TokenRepository::class],
-                $app[CacheRateLimiter::class],
-                $app[Dispatcher::class]
-            );
+        $this->app->singleton(TokenManager::class);
 
-            foreach ($this->app['config']['tokens']['defined'] as $token => $options) {
+        $this->app->afterResolving(TokenManager::class, function (TokenManager $manager) {
+            foreach ($this->app['config']['tokens']['define'] as $token => $options) {
                 if (is_int($token)) {
                     $manager->define($options);
                 } else {
                     $manager->define($token, $options);
                 }
             }
-
-            return $manager;
         });
 
-        $this->app->singletonIf(RateLimiter\CacheRateLimiter::class, RateLimiter\CacheRateLimiter::class);
+        $this->app->singletonIf(RateLimiter\RateLimiter::class, RateLimiter\CacheRateLimiter::class);
 
         $this->app->singletonIf(RandomHashGenerator::class, function (Application $app) {
             return new RandomHashGenerator($app['config']['app']['key']);
@@ -111,6 +102,7 @@ class TokenServiceProvider extends ServiceProvider
         if ($this->app->runningInConsole()) {
             $this->commands([
                 Console\ClearCommand::class,
+                Console\MakeCommand::class,
             ]);
         }
     }

@@ -9,10 +9,12 @@
         @input="form.errors.clear($event.target.id)"
         @submit.prevent="submit"
       >
+        <span v-show="form.errors.has('token')" class="mt-6 inline-block mt-1 text-red-600 text-sm">{{ form.errors.first('token') }}</span>
+
         <AppInput
-          class="mt-8"
           id="email"
           v-model="form.email"
+          class="mt-8"
           :errors="form.errors.get('email')"
           label="Email"
           placeholder="example@mail.com"

@@ -4,7 +4,7 @@ export default class Errors {
    * @param fields
    */
   constructor (fields) {
-    this.errors = {}
+    this.fields = fields
     this.initErrors(fields)
   }
 
@@ -12,22 +12,25 @@ export default class Errors {
    * Init empty form errors.
    */
   initErrors (fields) {
+    this.errors = {}
+
     fields.forEach((field) => {
       this.errors[field] = []
     })
   }
 
   /**
-   * Determine if the given field contains any error.
+   * Determine whether the given field contains any error.
    * @param field
    * @returns {boolean}
    */
   has (field) {
-    return this.errors[field].length
+    return this.errors[field] && this.errors[field].length
   }
 
   /**
-   * Determine if any field contains any error.
+   * TODO: include only errors from initial fields (ignore another fields)
+   * Determine whether any field contains any error.
    * @returns {boolean}
    */
   any () {

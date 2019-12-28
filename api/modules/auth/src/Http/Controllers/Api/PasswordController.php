@@ -3,27 +3,27 @@
 namespace Module\Auth\Http\Controllers\Api;
 
 use Illuminate\Validation\ValidationException;
-use Module\Auth\Http\Requests\ForgottenPasswordStoreRequest;
-use Module\Auth\Http\Requests\ForgottenPasswordUpdateRequest;
-use Module\Auth\UseCases\ForgotPassword;
-use Module\Auth\UseCases\ResetPassword;
+use Module\Auth\UseCases\PasswordForgot\PasswordForgotHandler;
+use Module\Auth\UseCases\PasswordForgot\PasswordForgotRequest;
+use Module\Auth\UseCases\PasswordReset\PasswordResetHandler;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
+use Module\Auth\UseCases\PasswordReset\PasswordResetRequest;
 use Nevadskiy\Tokens\Exceptions\LockoutException;
 use Nevadskiy\Tokens\Exceptions\TokenException;
 
-class ForgottenPasswordController
+class PasswordController
 {
     /**
      * Handle a forgotten password store request.
      *
-     * @param ForgottenPasswordStoreRequest $request
-     * @param ForgotPassword\Handler $handler
+     * @param PasswordForgotRequest $request
+     * @param PasswordForgotHandler $handler
      * @return JsonResponse|Response
      * @throws ValidationException
      */
-    public function store(ForgottenPasswordStoreRequest $request, ForgotPassword\Handler $handler)
+    public function forgot(PasswordForgotRequest $request, PasswordForgotHandler $handler)
     {
         try {
             $handler->handle($request->toCommand());
@@ -40,12 +40,12 @@ class ForgottenPasswordController
     /**
      * Handle a forgotten password update request.
      *
-     * @param ForgottenPasswordUpdateRequest $request
-     * @param ResetPassword\Handler $handler
+     * @param PasswordResetRequest $request
+     * @param PasswordResetHandler $handler
      * @return JsonResponse|Response
      * @throws ValidationException
      */
-    public function update(ForgottenPasswordUpdateRequest $request, ResetPassword\Handler $handler)
+    public function reset(PasswordResetRequest $request, PasswordResetHandler $handler)
     {
         try {
             $handler->handle($request->toCommand());

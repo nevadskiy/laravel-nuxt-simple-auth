@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Auth\UseCases\ResetPassword;
+namespace Module\Auth\UseCases\PasswordReset;
 
 use Module\Auth\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
@@ -8,7 +8,7 @@ use Illuminate\Contracts\Hashing\Hasher;
 use Nevadskiy\Tokens\Exceptions\TokenException;
 use Nevadskiy\Tokens\TokenManager;
 
-class Handler
+class PasswordResetHandler
 {
     /**
      * @var TokenManager
@@ -35,11 +35,11 @@ class Handler
     /**
      * Handle the reset password use case.
      *
-     * @param Command $command
+     * @param PasswordResetCommand $command
      * @return void
      * @throws TokenException
      */
-    public function handle(Command $command): void
+    public function handle(PasswordResetCommand $command): void
     {
         $this->tokenManager->useFor(
             $command->token,
@@ -69,10 +69,10 @@ class Handler
     /**
      * Get the user.
      *
-     * @param Command $command
+     * @param PasswordResetCommand $command
      * @return User
      */
-    protected function getUser(Command $command): User
+    protected function getUser(PasswordResetCommand $command): User
     {
         return User::where('email', $command->email)->firstOrFail();
     }

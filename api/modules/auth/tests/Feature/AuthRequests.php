@@ -78,9 +78,9 @@ trait AuthRequests
      * @param array $overrides
      * @return TestResponse
      */
-    private function forgotPasswordRequest(array $overrides = []): TestResponse
+    private function passwordForgotRequest(array $overrides = []): TestResponse
     {
-        return $this->postJson(route('api.auth.forgotten-password.store'), array_merge([
+        return $this->postJson(route('api.auth.password.forgot'), array_merge([
             'email' => 'user@mail.com'
         ], $overrides));
     }
@@ -91,9 +91,9 @@ trait AuthRequests
      * @param array $overrides
      * @return TestResponse
      */
-    private function resetPasswordRequest(array $overrides = []): TestResponse
+    private function passwordResetRequest(array $overrides = []): TestResponse
     {
-        return $this->putJson(route('api.auth.forgotten-password.update'), array_merge([
+        return $this->putJson(route('api.auth.password.reset'), array_merge([
             'email' => 'user@mail.com',
             'password' => 'NEW_PASSWORD',
             'token' => 'RESET_PASSWORD_TOKEN',

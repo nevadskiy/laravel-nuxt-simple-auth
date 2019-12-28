@@ -1,6 +1,6 @@
 <?php
 
-namespace Module\Auth\UseCases\ForgotPassword;
+namespace Module\Auth\UseCases\PasswordForgot;
 
 use Module\Auth\Models\User;
 use Module\Auth\Notifications\ResetPasswordNotification;
@@ -8,7 +8,7 @@ use DomainException;
 use Nevadskiy\Tokens\Exceptions\LockoutException;
 use Nevadskiy\Tokens\TokenManager;
 
-class Handler
+class PasswordForgotHandler
 {
     /**
      * @var TokenManager
@@ -28,11 +28,11 @@ class Handler
     /**
      * Handle the forgot password use case.
      *
-     * @param Command $command
+     * @param PasswordForgotCommand $command
      * @return void
      * @throws LockoutException|DomainException
      */
-    public function handle(Command $command): void
+    public function handle(PasswordForgotCommand $command): void
     {
         $user = $this->getUser($command);
 
@@ -44,10 +44,10 @@ class Handler
     /**
      * Get the user user.
      *
-     * @param Command $command
+     * @param PasswordForgotCommand $command
      * @return User
      */
-    protected function getUser(Command $command): User
+    protected function getUser(PasswordForgotCommand $command): User
     {
         return User::where('email', $command->email)->firstOrFail();
     }

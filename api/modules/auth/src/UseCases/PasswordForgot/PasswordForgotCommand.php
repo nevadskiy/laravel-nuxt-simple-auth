@@ -1,8 +1,8 @@
 <?php
 
-namespace Module\Auth\UseCases\ForgotPassword;
+namespace Module\Auth\UseCases\PasswordForgot;
 
-class Command
+class PasswordForgotCommand
 {
     /**
      * @var string

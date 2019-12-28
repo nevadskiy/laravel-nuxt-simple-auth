@@ -9,7 +9,7 @@ use Nevadskiy\Tokens\TokenManager;
 use Module\Auth\Tests\DatabaseTestCase;
 use Module\Auth\Tests\Factory\UserFactory;
 
-class ForgottenPasswordUpdateTest extends DatabaseTestCase
+class PasswordResetTest extends DatabaseTestCase
 {
     use AuthRequests;
 
@@ -28,7 +28,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
 
         $token = app(TokenManager::class)->generateFor($user, 'password.reset');
 
-        $response = $this->resetPasswordRequest([
+        $response = $this->passwordResetRequest([
             'email' => 'user@mail.com',
             'password' => 'NEW_PASSWORD',
             'token' => $token->toString(),
@@ -44,7 +44,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
     /** @test */
     public function guests_cannot_reset_password_with_unknown_email(): void
     {
-        $response = $this->resetPasswordRequest([
+        $response = $this->passwordResetRequest([
             'email' => 'another@mail.com',
             'password' => 'NEW_PASSWORD',
             'token' => 'SECRET_TOKEN',
@@ -61,7 +61,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
 
         $token = app(TokenManager::class)->generateFor($user, 'password.reset');
 
-        $response = $this->resetPasswordRequest([
+        $response = $this->passwordResetRequest([
             'email' => 'another@mail.com',
             'password' => 'NEW_PASSWORD',
             'token' => $token->toString(),
@@ -79,7 +79,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
         $responses = [];
 
         for ($i = 0; $i < 5; $i++) {
-            $responses[] = $this->resetPasswordRequest([
+            $responses[] = $this->passwordResetRequest([
                 'email' => 'user@mail.com',
                 'password' => 'NEW_PASSWORD',
                 'token' => 'INVALID_PASSWORD_TOKEN',
@@ -90,7 +90,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
             $response->assertJsonValidationErrors(['token' => __('auth::passwords.invalid_token')]);
         }
 
-        $response = $this->resetPasswordRequest([
+        $response = $this->passwordResetRequest([
             'email' => 'user@mail.com',
             'password' => 'NEW_PASSWORD',
             'token' => 'INVALID_PASSWORD_TOKEN',
@@ -106,7 +106,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
 
         $token = app(TokenManager::class)->generateFor($user, 'password.reset');
 
-        $response = $this->resetPasswordRequest([
+        $response = $this->passwordResetRequest([
             'email' => 'user@mail.com',
             'password' => 'NEW_PASSWORD',
             'token' => 'INVALID_PASSWORD_TOKEN',
@@ -124,7 +124,7 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
 
         $token = app(TokenManager::class)->generateFor($user, 'password.reset');
 
-        $response = $this->resetPasswordRequest([
+        $response = $this->passwordResetRequest([
             'email' => 'user@mail.com',
             'password' => 'NEW_PASSWORD',
             'token' => 'RESET_PASSWORD_TOKEN',
@@ -139,8 +139,9 @@ class ForgottenPasswordUpdateTest extends DatabaseTestCase
     {
         foreach ($this->invalidFields() as $field => $values) {
             foreach ($values as $rule => $value) {
-                $response = $this->resetPasswordRequest([$field => $value]);
+                $response = $this->passwordResetRequest([$field => $value]);
                 $response->assertJsonValidationErrors($field);
+                $response->assertJsonCount(1, "errors.{$field}");
                 $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
             }
         }

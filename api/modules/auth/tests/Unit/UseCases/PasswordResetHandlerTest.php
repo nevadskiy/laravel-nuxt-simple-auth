@@ -3,17 +3,17 @@
 namespace Module\Auth\Tests\Unit\UseCases;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Module\Auth\UseCases\ResetPassword\Command;
-use Module\Auth\UseCases\ResetPassword\Handler;
 use Module\Auth\Models\User;
 use Illuminate\Contracts\Hashing\Hasher;
 use Module\Auth\Tests\DatabaseTestCase;
+use Module\Auth\UseCases\PasswordReset\PasswordResetCommand;
+use Module\Auth\UseCases\PasswordReset\PasswordResetHandler;
 use Nevadskiy\Tokens\TokenManager;
 
 /**
- * @see Handler
+ * @see PasswordResetHandler
  */
-class ResetPasswordHandlerTest extends DatabaseTestCase
+class PasswordResetHandlerTest extends DatabaseTestCase
 {
     /** @test */
     public function it_resets_password_for_user_with_token(): void
@@ -32,7 +32,9 @@ class ResetPasswordHandlerTest extends DatabaseTestCase
                 $callback($u, 'NEW_PASSWORD');
             });
 
-        app(Handler::class, ['hasher' => $hasher])->handle(new Command('user@mail.com', 'NEW_PASSWORD', 'RESET_PASSWORD_TOKEN'));
+        $command = new PasswordResetCommand('user@mail.com', 'NEW_PASSWORD', 'RESET_PASSWORD_TOKEN');
+
+        app(PasswordResetHandler::class, ['hasher' => $hasher])->handle($command);
 
         $this->assertEquals('HASH_NEW_PASSWORD', $user->fresh()->password);
         $this->assertNull($user->fresh()->api_token);
@@ -44,7 +46,7 @@ class ResetPasswordHandlerTest extends DatabaseTestCase
         $manager = $this->spy(TokenManager::class);
 
         try {
-            app(Handler::class)->handle(new Command('user@mail.com', 'NEW_PASSWORD', 'RESET_PASSWORD_TOKEN'));
+            app(PasswordResetHandler::class)->handle(new PasswordResetCommand('user@mail.com', 'NEW_PASSWORD', 'RESET_PASSWORD_TOKEN'));
             $this->fail('Reset password handler handled command when should not.');
         } catch (ModelNotFoundException $e) {
             $manager->shouldNotHaveReceived('useFor');

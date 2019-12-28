@@ -6,15 +6,15 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Notification;
 use Module\Auth\Models\User;
 use Module\Auth\Notifications\ResetPasswordNotification;
-use Module\Auth\UseCases\ForgotPassword\Command;
-use Module\Auth\UseCases\ForgotPassword\Handler;
 use Module\Auth\Tests\DatabaseTestCase;
+use Module\Auth\UseCases\PasswordForgot\PasswordForgotCommand;
+use Module\Auth\UseCases\PasswordForgot\PasswordForgotHandler;
 use Nevadskiy\Tokens\TokenEntity;
 
 /**
- * @see Handler
+ * @see PasswordForgotHandler
  */
-class ForgotPasswordHandlerTest extends DatabaseTestCase
+class PasswordForgotHandlerTest extends DatabaseTestCase
 {
     /** @test */
     public function it_sends_reset_password_link(): void
@@ -23,7 +23,7 @@ class ForgotPasswordHandlerTest extends DatabaseTestCase
 
         $user = factory(User::class)->create(['email' => 'user@mail.com']);
 
-        app(Handler::class)->handle(new Command('user@mail.com'));
+        app(PasswordForgotHandler::class)->handle(new PasswordForgotCommand('user@mail.com'));
 
         $token = TokenEntity::last();
 
@@ -39,6 +39,6 @@ class ForgotPasswordHandlerTest extends DatabaseTestCase
     {
         $this->expectException(ModelNotFoundException::class);
 
-        app(Handler::class)->handle(new Command('test@mail.com'));
+        app(PasswordForgotHandler::class)->handle(new PasswordForgotCommand('test@mail.com'));
     }
 }

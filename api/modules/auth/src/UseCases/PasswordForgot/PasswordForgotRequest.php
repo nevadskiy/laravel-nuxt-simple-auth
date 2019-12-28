@@ -1,11 +1,10 @@
 <?php
 
-namespace Module\Auth\Http\Requests;
+namespace Module\Auth\UseCases\PasswordForgot;
 
-use Module\Auth\UseCases\ResetPassword\Command;
 use Illuminate\Foundation\Http\FormRequest;
 
-class ForgottenPasswordUpdateRequest extends FormRequest
+class PasswordForgotRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,19 +24,17 @@ class ForgottenPasswordUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'token' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255'],
-            'password' => ['required', 'string', 'min:8', 'max:255'],
+            'email' => ['bail', 'required', 'string', 'email', 'max:255'],
         ];
     }
 
     /**
      * Transform the request into the command.
      *
-     * @return Command
+     * @return PasswordForgotCommand
      */
-    public function toCommand(): Command
+    public function toCommand(): PasswordForgotCommand
     {
-        return new Command($this->get('email'), $this->get('password'), $this->get('token'));
+        return new PasswordForgotCommand($this->get('email'));
     }
 }

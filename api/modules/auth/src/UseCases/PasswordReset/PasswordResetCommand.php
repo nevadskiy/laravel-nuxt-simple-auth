@@ -1,8 +1,8 @@
 <?php
 
-namespace Module\Auth\UseCases\ResetPassword;
+namespace Module\Auth\UseCases\PasswordReset;
 
-class Command
+class PasswordResetCommand
 {
     /**
      * @var string

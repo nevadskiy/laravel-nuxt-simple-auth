@@ -1,11 +1,10 @@
 <?php
 
-namespace Module\Auth\Http\Requests;
+namespace Module\Auth\UseCases\SignIn;
 
-use Module\Auth\UseCases\SignIn\Command;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SignInStoreRequest extends FormRequest
+class SignInRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,18 +24,18 @@ class SignInStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email', 'max:255'],
-            'password' => ['required', 'string', 'max:255'],
+            'email' => ['bail', 'required', 'string', 'email', 'max:255'],
+            'password' => ['bail', 'required', 'string', 'max:255'],
         ];
     }
 
     /**
      * Transform the request into the command.
      *
-     * @return Command
+     * @return SignInCommand
      */
-    public function toCommand(): Command
+    public function toCommand(): SignInCommand
     {
-        return new Command($this->get('email'), $this->get('password'), $this->ip());
+        return new SignInCommand($this->get('email'), $this->get('password'), $this->ip());
     }
 }

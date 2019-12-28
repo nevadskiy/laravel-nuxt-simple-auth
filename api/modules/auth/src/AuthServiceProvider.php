@@ -4,7 +4,7 @@ namespace Module\Auth;
 
 use Module\Auth\Services\TokenGenerator;
 use Module\Auth\Http\Middleware;
-use Module\Auth\UseCases\SignIn\Handler;
+use Module\Auth\UseCases\SignIn\SignInHandler;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Contracts\Auth\UserProvider;
@@ -83,7 +83,7 @@ class AuthServiceProvider extends ServiceProvider
 
         $this->app->bind(TokenGenerator\ApiTokenGenerator::class, TokenGenerator\RandomTokenGenerator::class);
 
-        $this->app->when(Handler::class)
+        $this->app->when(SignInHandler::class)
             ->needs(UserProvider::class)
             ->give(function (Application $app) {
                 return $app['auth']->guard()->getProvider();

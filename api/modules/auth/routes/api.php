@@ -16,8 +16,8 @@ Route::group([
     Route::group([
         'middleware' => 'guest',
     ], function () {
-        Route::post('signup', [Api\SignUpController::class, 'store'])->name('api.auth.signup.store');
-        Route::post('signin', [Api\SignInController::class, 'store'])->name('api.auth.signin.store');
+        Route::post('signup', Api\SignUpController::class)->name('api.auth.signup.store');
+        Route::post('signin', Api\SignInController::class)->name('api.auth.sign-in');
 
         Route::post('password/forgot', [Api\PasswordController::class, 'forgot'])->name('api.auth.password.forgot');
         Route::put('password/reset', [Api\PasswordController::class, 'reset'])->name('api.auth.password.reset');

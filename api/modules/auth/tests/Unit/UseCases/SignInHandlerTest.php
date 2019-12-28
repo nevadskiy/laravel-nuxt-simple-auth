@@ -3,8 +3,8 @@
 namespace Module\Auth\Tests\Unit\UseCases;
 
 use Module\Auth\Services\TokenGenerator\ApiTokenGenerator;
-use Module\Auth\UseCases\SignIn\Command;
-use Module\Auth\UseCases\SignIn\Handler;
+use Module\Auth\UseCases\SignIn\SignInCommand;
+use Module\Auth\UseCases\SignIn\SignInHandler;
 use Module\Auth\Models\User;
 use Carbon\CarbonInterval;
 use DateInterval;
@@ -14,7 +14,7 @@ use Module\Auth\Tests\DatabaseTestCase;
 use Nevadskiy\Tokens\RateLimiter\RateLimiter;
 
 /**
- * @see Handler
+ * @see SignInHandler
  */
 class SignInHandlerTest extends DatabaseTestCase
 {
@@ -35,9 +35,9 @@ class SignInHandlerTest extends DatabaseTestCase
 
         $this->app->instance('hash', $hasher);
 
-        $command = new Command('user@mail.com', 'request.password', 'testing-ip');
+        $command = new SignInCommand('user@mail.com', 'request.password', 'testing-ip');
 
-        $authUser = app(Handler::class)->handle($command);
+        $authUser = app(SignInHandler::class)->handle($command);
 
         $this->assertTrue($authUser->is($user));
     }
@@ -64,9 +64,9 @@ class SignInHandlerTest extends DatabaseTestCase
             ->once()
             ->andReturn('simple-api-token');
 
-        $command = new Command('user@mail.com', 'request.password', 'testing-ip');
+        $command = new SignInCommand('user@mail.com', 'request.password', 'testing-ip');
 
-        $user = app(Handler::class)->handle($command);
+        $user = app(SignInHandler::class)->handle($command);
 
         $this->assertEquals('simple-api-token', $user->fresh()->api_token);
     }
@@ -77,7 +77,7 @@ class SignInHandlerTest extends DatabaseTestCase
         $spy = $this->spy(ApiTokenGenerator::class);
 
         try {
-            app(Handler::class)->handle(new Command('user@mail.com', 'password', 'testing-ip'));
+            app(SignInHandler::class)->handle(new SignInCommand('user@mail.com', 'password', 'testing-ip'));
             $this->fail('Exception was not thrown but should.');
         } catch (DomainException $e) {
             $spy->shouldNotHaveReceived('generate');
@@ -101,12 +101,12 @@ class SignInHandlerTest extends DatabaseTestCase
 
         $this->app->instance('hash', $hasher);
 
-        $command = new Command('user@mail.com', 'password', 'testing-ip');
+        $command = new SignInCommand('user@mail.com', 'password', 'testing-ip');
 
         $spy = $this->spy(ApiTokenGenerator::class);
 
         try {
-            app(Handler::class)->handle($command);
+            app(SignInHandler::class)->handle($command);
             $this->fail('Exception was not thrown but should.');
         } catch (DomainException $e) {
             $spy->shouldNotHaveReceived('generate');
@@ -138,6 +138,6 @@ class SignInHandlerTest extends DatabaseTestCase
                 return $callback();
             });
 
-        $this->assertTrue($user->is(app(Handler::class)->handle(new Command('user@mail.com', 'password', 'testing-ip'))));
+        $this->assertTrue($user->is(app(SignInHandler::class)->handle(new SignInCommand('user@mail.com', 'password', 'testing-ip'))));
     }
 }

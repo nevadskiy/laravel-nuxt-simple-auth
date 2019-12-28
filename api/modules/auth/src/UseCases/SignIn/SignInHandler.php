@@ -2,7 +2,6 @@
 
 namespace Module\Auth\UseCases\SignIn;
 
-use Illuminate\Contracts\Auth\Guard;
 use Module\Auth\Models\User;
 use Module\Auth\Services\TokenGenerator\ApiTokenGenerator;
 use Carbon\CarbonInterval;
@@ -14,7 +13,7 @@ use Illuminate\Support\Str;
 use Nevadskiy\Tokens\Exceptions\LockoutException;
 use Nevadskiy\Tokens\RateLimiter\RateLimiter;
 
-class Handler
+class SignInHandler
 {
     /**
      * @var UserProvider
@@ -37,13 +36,11 @@ class Handler
      * @param UserProvider $provider
      * @param ApiTokenGenerator $generator
      * @param RateLimiter $limiter
-     * @param Guard $guard
      */
     public function __construct(
         UserProvider $provider,
         ApiTokenGenerator $generator,
-        RateLimiter $limiter,
-        Guard $guard
+        RateLimiter $limiter
     )
     {
         $this->provider = $provider;
@@ -54,11 +51,11 @@ class Handler
     /**
      * Handle the sign in use case.
      *
-     * @param Command $command
+     * @param SignInCommand $command
      * @return User
      * @throws LockoutException
      */
-    public function handle(Command $command): User
+    public function handle(SignInCommand $command): User
     {
         return $this->limiter->limit(
             $this->getThrottleKey($command),
@@ -73,10 +70,10 @@ class Handler
     /**
      * Handle the sign in use case.
      *
-     * @param Command $command
+     * @param SignInCommand $command
      * @return User
      */
-    public function signIn(Command $command): User
+    public function signIn(SignInCommand $command): User
     {
         $user = $this->findUser($command);
 
@@ -94,10 +91,10 @@ class Handler
     /**
      * Find a user.
      *
-     * @param Command $command
+     * @param SignInCommand $command
      * @return User|Authenticatable|null
      */
-    private function findUser(Command $command): ?User
+    private function findUser(SignInCommand $command): ?User
     {
         return $this->provider->retrieveByCredentials(['email' => $command->email]);
     }
@@ -105,11 +102,11 @@ class Handler
     /**
      * Validate the user credentials.
      *
-     * @param Command $command
+     * @param SignInCommand $command
      * @param User $user
      * @return bool
      */
-    private function validateUserCredentials(Command $command, User $user): bool
+    private function validateUserCredentials(SignInCommand $command, User $user): bool
     {
         return $this->provider->validateCredentials($user, ['password' => $command->password]);
     }
@@ -127,10 +124,10 @@ class Handler
     /**
      * Get the throttle key for the given request.
      *
-     * @param Command $command
+     * @param SignInCommand $command
      * @return string
      */
-    private function getThrottleKey(Command $command): string
+    private function getThrottleKey(SignInCommand $command): string
     {
         return Str::lower("{$command->email}|{$command->ip}");
     }

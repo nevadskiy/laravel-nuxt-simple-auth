@@ -8,7 +8,7 @@ use Illuminate\Http\Response;
 use Module\Auth\Tests\DatabaseTestCase;
 use Module\Auth\Tests\Factory\UserFactory;
 
-class SignInStoreTest extends DatabaseTestCase
+class SignInTest extends DatabaseTestCase
 {
     use AuthRequests;
 
@@ -100,6 +100,7 @@ class SignInStoreTest extends DatabaseTestCase
                 $response = $this->signInRequest([$field => $value]);
                 $this->assertEmpty(User::all(), "Request was processed with the invalid {$field} for the rule {$rule}");
                 $response->assertJsonValidationErrors($field);
+                $response->assertJsonCount(1, "errors.{$field}");
                 $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
             }
         }

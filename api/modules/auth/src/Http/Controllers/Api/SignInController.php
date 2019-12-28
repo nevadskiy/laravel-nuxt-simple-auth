@@ -4,10 +4,10 @@ namespace Module\Auth\Http\Controllers\Api;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
-use Module\Auth\Http\Requests\SignInStoreRequest;
-use Module\Auth\UseCases\SignIn\Handler;
+use Module\Auth\UseCases\SignIn\SignInHandler;
 use DomainException;
 use Illuminate\Http\Response;
+use Module\Auth\UseCases\SignIn\SignInRequest;
 use Nevadskiy\Tokens\Exceptions\LockoutException;
 
 class SignInController
@@ -15,12 +15,12 @@ class SignInController
     /**
      * Handle a sign in request.
      *
-     * @param SignInStoreRequest $request
-     * @param Handler $handler
+     * @param SignInRequest $request
+     * @param SignInHandler $handler
      * @return Response|JsonResponse
      * @throws ValidationException
      */
-    public function store(SignInStoreRequest $request, Handler $handler)
+    public function __invoke(SignInRequest $request, SignInHandler $handler)
     {
         try {
             $user = $handler->handle($request->toCommand());

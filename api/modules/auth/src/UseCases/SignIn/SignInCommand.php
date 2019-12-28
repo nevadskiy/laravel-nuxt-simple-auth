@@ -2,7 +2,7 @@
 
 namespace Module\Auth\UseCases\SignIn;
 
-class Command
+class SignInCommand
 {
     /**
      * @var string

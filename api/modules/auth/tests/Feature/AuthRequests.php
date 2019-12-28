@@ -32,7 +32,7 @@ trait AuthRequests
      */
     private function signInRequest(array $overrides = []): TestResponse
     {
-        return $this->postJson(route('api.auth.signin.store'), array_merge([
+        return $this->postJson(route('api.auth.sign-in'), array_merge([
             'email' => 'user@mail.com',
             'password' => 'secret123',
         ], $overrides));

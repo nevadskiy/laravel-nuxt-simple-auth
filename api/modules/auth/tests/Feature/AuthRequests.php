@@ -45,7 +45,7 @@ trait AuthRequests
      */
     private function signOutRequest(): TestResponse
     {
-        return $this->deleteJson(route('api.auth.signout.destroy'));
+        return $this->deleteJson(route('api.auth.sign-out'));
     }
 
     /**

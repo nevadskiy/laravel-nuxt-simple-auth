@@ -4,7 +4,7 @@ namespace Module\Auth\UseCases\SignOut;
 
 use Module\Auth\Models\User;
 
-class Handler
+class SignOutHandler
 {
     /**
      * Handle the sign out use case.

@@ -5,7 +5,7 @@ namespace Module\Auth\Tests\Feature;
 use Module\Auth\Models\User;
 use Module\Auth\Tests\DatabaseTestCase;
 
-class SignOutDestroyTest extends DatabaseTestCase
+class SignOutTest extends DatabaseTestCase
 {
     use AuthRequests;
 

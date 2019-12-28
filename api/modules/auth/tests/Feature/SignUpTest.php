@@ -56,6 +56,7 @@ class SignUpTest extends DatabaseTestCase
                 $response = $this->signUpRequest([$field => $value]);
                 $this->assertEmpty(User::all(), "Request was processed with the invalid {$field} for the rule {$rule}");
                 $response->assertJsonValidationErrors($field);
+                $response->assertJsonCount(1, "errors.{$field}");
                 $response->assertStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
             }
         }

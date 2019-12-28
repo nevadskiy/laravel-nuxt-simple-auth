@@ -2,8 +2,9 @@
 
 namespace Module\Auth;
 
+use Illuminate\Auth\Middleware\Authenticate;
+use Module\Auth\Http\Middleware\OnlyGuests;
 use Module\Auth\Services\TokenGenerator;
-use Module\Auth\Http\Middleware;
 use Module\Auth\UseCases\SignIn\SignInHandler;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -28,8 +29,8 @@ class AuthServiceProvider extends ServiceProvider
      * @var array
      */
     protected $middleware = [
-        'auth' => Middleware\Authenticate::class,
-        'guest' => Middleware\OnlyAuthenticated::class,
+        'auth' => Authenticate::class,
+        'guest' => OnlyGuests::class,
     ];
 
     /**

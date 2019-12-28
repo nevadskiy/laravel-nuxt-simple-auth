@@ -26,5 +26,7 @@ composer require module/auth:*
 - Remove `guest` and `auth` middleware from `$routeMiddleware` array in the `app/Http/Kernel.php` file.
 They are loaded automatically from the `Auth` module.
 
+- Remove `Authenticate.php` and `RedirectIfAuthenticated.php` files from `app/Http/Middleware` directory.
+
 - Replace `\App\Http\Middleware\Authenticate::class` with `\Module\Auth\Http\Middleware\Authenticate::class` 
 in `$middlewarePriority` array in the in the `app/Http/Kernel.php` file.

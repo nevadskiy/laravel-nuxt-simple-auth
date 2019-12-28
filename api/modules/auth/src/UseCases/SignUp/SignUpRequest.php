@@ -1,11 +1,10 @@
 <?php
 
-namespace Module\Auth\Http\Requests;
+namespace Module\Auth\UseCases\SignUp;
 
-use Module\Auth\UseCases\SignUp\Command;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SignUpStoreRequest extends FormRequest
+class SignUpRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -33,10 +32,10 @@ class SignUpStoreRequest extends FormRequest
     /**
      * Transform the request into the command.
      *
-     * @return Command
+     * @return SignUpCommand
      */
-    public function toCommand(): Command
+    public function toCommand(): SignUpCommand
     {
-        return new Command($this->get('email'), $this->get('password'));
+        return new SignUpCommand($this->get('email'), $this->get('password'));
     }
 }

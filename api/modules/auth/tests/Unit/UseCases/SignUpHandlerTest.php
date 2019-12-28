@@ -2,8 +2,8 @@
 
 namespace Module\Auth\Tests\Unit\UseCases;
 
-use Module\Auth\UseCases\SignUp\Command;
-use Module\Auth\UseCases\SignUp\Handler;
+use Module\Auth\UseCases\SignUp\SignUpCommand;
+use Module\Auth\UseCases\SignUp\SignUpHandler;
 use Module\Auth\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Hashing\Hasher;
@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Event;
 use Module\Auth\Tests\DatabaseTestCase;
 
 /**
- * @see Handler
+ * @see SignUpHandler
  */
 class SignUpHandlerTest extends DatabaseTestCase
 {
@@ -24,9 +24,9 @@ class SignUpHandlerTest extends DatabaseTestCase
             ->with('secret')
             ->andReturn('secret');
 
-        $command = new Command('guest@mail.com', 'secret');
+        $command = new SignUpCommand('guest@mail.com', 'secret');
 
-        $user = app(Handler::class)->handle($command);
+        $user = app(SignUpHandler::class)->handle($command);
 
         $this->assertCount(1, User::all());
         $this->assertEquals('guest@mail.com', $user->email);
@@ -38,9 +38,9 @@ class SignUpHandlerTest extends DatabaseTestCase
     {
         Event::fake(Registered::class);
 
-        $command = new Command('guest@mail.com', 'secret');
+        $command = new SignUpCommand('guest@mail.com', 'secret');
 
-        $user = app(Handler::class)->handle($command);
+        $user = app(SignUpHandler::class)->handle($command);
 
         Event::assertDispatched(Registered::class, 1);
         Event::assertDispatched(Registered::class, function (Registered $event) use ($user) {

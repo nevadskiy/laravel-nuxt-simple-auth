@@ -2,9 +2,9 @@
 
 namespace Module\Auth\Http\Controllers\Api;
 
-use Module\Auth\Http\Requests\SignUpStoreRequest;
 use Module\Auth\Http\Resources\UserResource;
-use Module\Auth\UseCases\SignUp\Handler;
+use Module\Auth\UseCases\SignUp\SignUpHandler;
+use Module\Auth\UseCases\SignUp\SignUpRequest;
 use Symfony\Component\HttpFoundation\Response;
 
 class SignUpController
@@ -12,11 +12,11 @@ class SignUpController
     /**
      * Handle a sign up request.
      *
-     * @param SignUpStoreRequest $request
-     * @param Handler $handler
+     * @param SignUpRequest $request
+     * @param SignUpHandler $handler
      * @return Response|UserResource
      */
-    public function store(SignUpStoreRequest $request, Handler $handler)
+    public function __invoke(SignUpRequest $request, SignUpHandler $handler)
     {
         return new UserResource(
             $handler->handle($request->toCommand())

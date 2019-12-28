@@ -18,7 +18,7 @@ trait AuthRequests
      */
     public function signUpRequest(array $overrides = []): TestResponse
     {
-        return $this->postJson(route('api.auth.signup.store'), array_merge([
+        return $this->postJson(route('api.auth.sign-up'), array_merge([
             'email' => 'user@mail.com',
             'password' => 'secret123',
         ], $overrides));

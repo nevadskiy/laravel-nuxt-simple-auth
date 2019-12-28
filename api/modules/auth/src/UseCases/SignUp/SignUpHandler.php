@@ -6,7 +6,7 @@ use Module\Auth\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Hashing\Hasher;
 
-class Handler
+class SignUpHandler
 {
     /**
      * @var Hasher
@@ -26,10 +26,10 @@ class Handler
     /**
      * Handle the sign up use case.
      *
-     * @param Command $command
+     * @param SignUpCommand $command
      * @return User
      */
-    public function handle(Command $command): User
+    public function handle(SignUpCommand $command): User
     {
         $user = new User([
             'email' => $command->email,

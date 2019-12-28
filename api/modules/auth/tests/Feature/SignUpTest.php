@@ -6,7 +6,7 @@ use Module\Auth\Models\User;
 use Illuminate\Http\Response;
 use Module\Auth\Tests\DatabaseTestCase;
 
-class SignUpStoreTest extends DatabaseTestCase
+class SignUpTest extends DatabaseTestCase
 {
     use AuthRequests;
 

@@ -56,7 +56,7 @@ trait AuthRequests
      */
     private function getUserRequest(string $apiToken): TestResponse
     {
-        return $this->getJson(route('api.auth.user.index'), [
+        return $this->getJson(route('api.auth.user'), [
             'Authorization' => "Bearer {$apiToken}"
         ]);
     }

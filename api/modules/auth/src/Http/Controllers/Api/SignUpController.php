@@ -5,7 +5,6 @@ namespace Module\Auth\Http\Controllers\Api;
 use Module\Auth\Http\Resources\UserResource;
 use Module\Auth\UseCases\SignUp\SignUpHandler;
 use Module\Auth\UseCases\SignUp\SignUpRequest;
-use Symfony\Component\HttpFoundation\Response;
 
 class SignUpController
 {
@@ -14,7 +13,7 @@ class SignUpController
      *
      * @param SignUpRequest $request
      * @param SignUpHandler $handler
-     * @return Response|UserResource
+     * @return UserResource
      */
     public function __invoke(SignUpRequest $request, SignUpHandler $handler)
     {

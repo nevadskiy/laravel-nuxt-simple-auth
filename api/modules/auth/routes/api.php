@@ -25,7 +25,7 @@ Route::group([
 
         Route::delete('signout', Api\SignOutController::class)->name('api.auth.sign-out');
 
-        Route::get('user', [Api\UserController::class, 'index'])->name('api.auth.user.index');
+        Route::get('user', Api\UserController::class)->name('api.auth.user');
 
     });
 

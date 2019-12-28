@@ -5,7 +5,7 @@ namespace Module\Auth\Tests\Feature;
 use Module\Auth\Tests\DatabaseTestCase;
 use Module\Auth\Tests\Factory\UserFactory;
 
-class UserIndexTest extends DatabaseTestCase
+class UserTest extends DatabaseTestCase
 {
     use AuthRequests;
 

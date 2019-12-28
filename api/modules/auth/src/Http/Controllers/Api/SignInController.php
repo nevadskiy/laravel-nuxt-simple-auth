@@ -17,7 +17,7 @@ class SignInController
      *
      * @param SignInRequest $request
      * @param SignInHandler $handler
-     * @return Response|JsonResponse
+     * @return JsonResponse
      * @throws ValidationException
      */
     public function __invoke(SignInRequest $request, SignInHandler $handler)

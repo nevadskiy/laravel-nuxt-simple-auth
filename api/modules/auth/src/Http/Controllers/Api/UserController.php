@@ -11,9 +11,9 @@ class UserController
      * Handle a user request.
      *
      * @param Request $request
-     * @return mixed
+     * @return UserResource
      */
-    public function index(Request $request)
+    public function __invoke(Request $request)
     {
         return new UserResource(
             $request->user()

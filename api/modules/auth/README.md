@@ -1,11 +1,11 @@
 ## About
-The module use the default laravel API guard with the simple api_token field in the users table.
+The module uses the default Laravel API guard with the simple `api_token` field in the users table.
 
-Password broker is replaced with nevadskiy/tokens package. 
+Password broker is replaced with the (nevadskiy/token)[https://github.com/nevadskiy/tokens] package. 
 
 ## Installation
 
-- Add the module repository to composer.json
+- Add the module repository to the `composer.json` file.
 ```
 "repositories": [
     {

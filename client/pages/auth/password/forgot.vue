@@ -76,7 +76,6 @@ export default {
           this.$router.push({ name: 'auth-password-sent' })
         })
       } catch (e) {
-        console.log(e)
       }
     }
   }

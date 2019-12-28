@@ -103,7 +103,6 @@ export default {
           this.$router.push({ name: 'index' })
         })
       } catch (e) {
-        console.log(e)
       }
     }
   }

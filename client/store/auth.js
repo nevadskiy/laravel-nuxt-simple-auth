@@ -69,10 +69,10 @@ export const actions = {
   },
 
   forgot ({ dispatch }, { email }) {
-    return this.$axios.post('/api/auth/forgot', { email })
+    return this.$axios.post('/api/auth/password/forgot', { email })
   },
 
   reset ({ dispatch }, { email, password, token }) {
-    return this.$axios.put('/api/auth/forgot', { email, password, token })
+    return this.$axios.put('/api/auth/password/reset', { email, password, token })
   }
 }

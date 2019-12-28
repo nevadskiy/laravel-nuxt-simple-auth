@@ -1,0 +1,33 @@
+{
+    "name": "module/auth",
+    "description": "The Auth module.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nevadskiy",
+            "email": "nevadskiy@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.2",
+        "laravel/framework": "^6.2",
+        "nevadskiy/tokens": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Module\\Auth\\": "/src",
+            "Module\\Auth\\Tests\\": "/tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Module\\Auth\\AuthServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev"
+}

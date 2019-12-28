@@ -2,9 +2,8 @@
 
 namespace App\Providers;
 
-use App\Services\Auth\TokenGenerator;
-use App\UseCases\Auth\SignIn\Handler;
-use Illuminate\Contracts\Auth\UserProvider;
+use App\Auth\Services\TokenGenerator;
+use App\Services\Url\Link;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
@@ -19,10 +18,10 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(TokenGenerator\ApiTokenGenerator::class, TokenGenerator\RandomTokenGenerator::class);
 
-        $this->app->when(Handler::class)
-            ->needs(UserProvider::class)
+        $this->app->when(Link::class)
+            ->needs('$baseUrl')
             ->give(function (Application $app) {
-                return $app['auth']->guard()->getProvider();
+                return $app['config']['app']['url'];
             });
     }
 

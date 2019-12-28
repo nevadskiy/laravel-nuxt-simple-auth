@@ -23,7 +23,7 @@
         >
           <svg
             slot="icon"
-            class="absolute right-0 mr-4 w-4 h-4 fill-current text-gray-500 pointer-events-none"
+            class="w-4 h-4 fill-current text-gray-500 pointer-events-none"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 395 395"
           >
@@ -45,7 +45,7 @@
         >
           <svg
             slot="icon"
-            class="absolute right-0 mr-4 w-4 h-4 fill-current text-gray-500 pointer-events-none"
+            class="w-4 h-4 fill-current text-gray-500 pointer-events-none"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 512 512"
           >
@@ -55,7 +55,11 @@
           </svg>
         </AppInput>
 
-        <AppButton type="submit" class="mt-8 w-full">
+        <AppButton
+          :loading="form.isPending"
+          type="submit"
+          class="mt-8 w-full"
+        >
           Sign up
         </AppButton>
       </form>
@@ -99,16 +103,13 @@ export default {
 
   methods: {
     async submit () {
-      const { email, password } = this.form
-
       try {
         await this.form.submitUsing(async () => {
+          const { email, password } = this.form
           await this.$store.dispatch('auth/signup', { email, password })
+          await this.$store.dispatch('auth/signin', { email, password })
+          this.$router.push({ name: 'index' })
         })
-
-        await this.$store.dispatch('auth/signin', { email, password })
-
-        this.$router.push({ name: 'index' })
       } catch (e) {
       }
     }

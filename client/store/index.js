@@ -1,5 +1,7 @@
 export const actions = {
-  nuxtServerInit ({ dispatch }) {
-    return Promise.all([dispatch('auth/serverInit')])
+  nuxtServerInit ({ dispatch }, context) {
+    return Promise.all([
+      dispatch('auth/nuxtServerInit', context)
+    ])
   }
 }

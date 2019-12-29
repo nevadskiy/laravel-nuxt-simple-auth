@@ -28,5 +28,13 @@ They are loaded automatically from the `Auth` module.
 
 - Remove `Authenticate.php` and `RedirectIfAuthenticated.php` files from `app/Http/Middleware` directory.
 
-- Replace `\App\Http\Middleware\Authenticate::class` with `\Module\Auth\Http\Middleware\Authenticate::class` 
+- Replace `\App\Http\Middleware\Authenticate::class` with `\Illuminate\Auth\Middleware\Authenticate::class,` 
 in `$middlewarePriority` array in the in the `app/Http/Kernel.php` file.
+
+
+#### TODO:
+- [ ] Add a nuxt guest middleware
+- [ ] Add a nuxt auth middleware
+- [ ] Add a php linting (like ESLint, probably pretier with psr configuration) 
+- [ ] Add a php cli user:create command
+- [ ] Change reset password behaviour to less secure but more comfortable

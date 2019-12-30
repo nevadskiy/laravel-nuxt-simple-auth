@@ -12,18 +12,18 @@
 
     <transition name="fade">
       <div v-if="loading" class="absolute p-1 inset-0 flex items-center justify-center">
-        <AppLoader />
+        <Loader />
       </div>
     </transition>
   </component>
 </template>
 
 <script>
-import AppLoader from './AppLoader.vue'
+import Loader from './Loader.vue'
 
 export default {
   components: {
-    AppLoader
+    Loader
   },
 
   props: {

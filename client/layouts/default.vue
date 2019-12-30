@@ -1,8 +1,8 @@
 <template>
-  <div class="h-full font-sans antialiased flex flex-col bg-gray-200 text-gray-800">
-    <AppHeader />
+  <div class="h-full flex flex-col font-sans antialiased bg-gray-200 text-gray-800">
+    <AppHeader class="flex-shrink-0" />
     <nuxt class="flex-1" />
-    <AppFooter />
+    <AppFooter class="flex-shrink-0" />
   </div>
 </template>
 
@@ -16,3 +16,12 @@ export default {
   }
 }
 </script>
+
+<style>
+  html,
+  body,
+  #__nuxt,
+  #__layout {
+    @apply h-full;
+  }
+</style>

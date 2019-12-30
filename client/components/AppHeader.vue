@@ -1,5 +1,5 @@
 <template>
-  <header class="h-16 bg-gray-800 shadow-md flex items-center">
+  <header class="h-16 flex items-center bg-gray-800 shadow-md">
     <div class="container mx-auto px-4 flex items-center">
       <nuxt-link :to="{ name: 'index' }" class="font-bold text-white">
         Home
@@ -33,7 +33,7 @@
         <button
           v-if="$store.getters['auth/auth']"
           class="ml-12 font-bold text-gray-100"
-          @click.prevent="signout"
+          @click.prevent="signOut"
         >
           Sign out
         </button>
@@ -45,9 +45,9 @@
 <script>
 export default {
   methods: {
-    async signout () {
+    async signOut () {
       try {
-        await this.$store.dispatch('auth/signout')
+        await this.$store.dispatch('auth/signOut')
       } catch (e) {
       }
     }

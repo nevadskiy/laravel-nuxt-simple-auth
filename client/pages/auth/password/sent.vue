@@ -24,6 +24,10 @@ export default {
     AppButton
   },
 
+  middleware: [
+    'guest'
+  ],
+
   layout: 'auth',
 
   transition: {

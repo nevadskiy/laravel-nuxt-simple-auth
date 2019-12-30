@@ -74,16 +74,20 @@ import AppInput from '~/components/AppInput.vue'
 import AppButton from '~/components/AppButton.vue'
 
 export default {
+  components: {
+    AppInput,
+    AppButton
+  },
+
+  middleware: [
+    'guest'
+  ],
+
   layout: 'auth',
 
   transition: {
     name: 'slide-left',
     mode: 'out-in'
-  },
-
-  components: {
-    AppInput,
-    AppButton
   },
 
   data () {
@@ -99,10 +103,19 @@ export default {
     async submit () {
       try {
         await this.form.submitUsing(async () => {
-          await this.$store.dispatch('auth/signin', this.form)
-          this.$router.push({ name: 'index' })
+          await this.$store.dispatch('auth/signIn', this.form)
+          this.redirect()
         })
       } catch (e) {
+      }
+    },
+
+    redirect () {
+      if (this.$store.getters['auth/intendedUrl']) {
+        this.$router.push(this.$store.getters['auth/intendedUrl'])
+        this.$store.dispatch('auth/setIntendedUrl', null)
+      } else {
+        this.$router.push({ name: 'index' })
       }
     }
   }

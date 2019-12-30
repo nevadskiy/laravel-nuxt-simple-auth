@@ -1,9 +1,9 @@
 <template>
-  <div class="h-full font-sans antialiased bg-blue-300 text-gray-800 bg-page-gradient flex flex-col">
-    <AppHeader />
+  <div class="h-full flex flex-col font-sans antialiased bg-blue-300 text-gray-800 bg-page-gradient flex flex-col">
+    <AppHeader class="flex-shrink-0" />
 
-    <div class="flex-1 container mx-auto px-4 py-5">
-      <nuxt class="mt-20" />
+    <div class="flex-1 container mx-auto px-mi4 py-5">
+      <nuxt class="mt-10" />
     </div>
   </div>
 </template>
@@ -18,13 +18,6 @@ export default {
 </script>
 
 <style>
-  html,
-  body,
-  #__nuxt,
-  #__layout {
-    @apply h-full;
-  }
-
   .bg-page-gradient {
     background-image: linear-gradient(to right bottom, #3672f8, #b01eff);
   }

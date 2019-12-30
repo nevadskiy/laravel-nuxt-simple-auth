@@ -23,7 +23,10 @@ export default class AuthToken {
    */
   set (token) {
     this.$axios.setToken(token, 'Bearer')
-    this.$cookie.set('token', token, { maxAge: 60 * 60 * 24 * 7 * 365 })
+    this.$cookie.set('token', token, {
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7 * 365
+    })
   }
 
   /**

@@ -1,6 +1,7 @@
 export const state = () => ({
   token: '',
-  user: null
+  user: null,
+  intendedUrl: null
 })
 
 export const getters = {
@@ -18,6 +19,10 @@ export const getters = {
 
   token (state) {
     return state.token
+  },
+
+  intendedUrl (state) {
+    return state.intendedUrl
   }
 }
 
@@ -32,47 +37,65 @@ export const mutations = {
 
   SET_USER (state, user) {
     state.user = user
+  },
+
+  SET_INTENDED_URL (state, url) {
+    state.intendedUrl = url
   }
 }
 
 export const actions = {
-  serverInit ({ dispatch }) {
-    return dispatch('attempt', this.$cookie.get('token'))
+  async nuxtServerInit ({ dispatch }) {
+    const token = this.app.authToken.get()
+
+    if (!token) {
+      return
+    }
+
+    await dispatch('attempt', token)
   },
 
-  signup (_, { email, password }) {
+  signUp (_, { email, password }) {
     return this.$axios.post('/api/auth/signup', { email, password })
   },
 
-  async signin ({ dispatch }, { email, password }) {
+  async signIn ({ dispatch }, { email, password }) {
     const response = await this.$axios.post('/api/auth/signin', { email, password })
     await dispatch('attempt', response.data.api_token)
   },
 
   async attempt ({ commit }, token) {
+    console.log('attemping...')
+    console.log(token)
     commit('SET_TOKEN', token)
 
     try {
-      const response = await this.$axios.get('/api/auth/user')
+      const response = await this.$axios.get(`/api/auth/user`)
       commit('SET_USER', response.data.data)
+      console.log('AUTH SUCCESS')
       return response
     } catch (error) {
       commit('FLUSH_TOKEN')
       commit('SET_USER', null)
+      console.log('AUTH FAILED')
     }
   },
 
-  async signout ({ commit }) {
+  async signOut ({ commit }) {
     await this.$axios.delete('/api/auth/signout')
     commit('FLUSH_TOKEN')
     commit('SET_USER', null)
   },
 
-  forgot ({ dispatch }, { email }) {
+  passwordForgot ({ dispatch }, { email }) {
     return this.$axios.post('/api/auth/password/forgot', { email })
   },
 
-  reset ({ dispatch }, { email, password, token }) {
+  passwordReset ({ dispatch }, { email, password, token }) {
     return this.$axios.put('/api/auth/password/reset', { email, password, token })
+  },
+
+  setIntendedUrl ({ commit }, url) {
+    commit('SET_INTENDED_URL', url)
   }
 }

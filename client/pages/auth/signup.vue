@@ -80,16 +80,20 @@ import AppInput from '~/components/AppInput.vue'
 import AppButton from '~/components/AppButton.vue'
 
 export default {
+  components: {
+    AppInput,
+    AppButton
+  },
+
+  middleware: [
+    'guest'
+  ],
+
   layout: 'auth',
 
   transition: {
     name: 'slide-right',
     mode: 'out-in'
-  },
-
-  components: {
-    AppInput,
-    AppButton
   },
 
   data () {
@@ -106,8 +110,8 @@ export default {
       try {
         await this.form.submitUsing(async () => {
           const { email, password } = this.form
-          await this.$store.dispatch('auth/signup', { email, password })
-          await this.$store.dispatch('auth/signin', { email, password })
+          await this.$store.dispatch('auth/signUp', { email, password })
+          await this.$store.dispatch('auth/signIn', { email, password })
           this.$router.push({ name: 'index' })
         })
       } catch (e) {

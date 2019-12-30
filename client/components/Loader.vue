@@ -1,5 +1,5 @@
 <template functional>
-  <svg class="loader" viewBox="25 25 50 50">
+  <svg class="loader" viewBox="25 25 50 50" xmlns="http://www.w3.org/2000/svg">
     <circle
       class="path stroke-current"
       cx="50"

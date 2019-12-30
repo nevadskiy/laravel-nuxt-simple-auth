@@ -31,10 +31,14 @@ They are loaded automatically from the `Auth` module.
 - Replace `\App\Http\Middleware\Authenticate::class` with `\Illuminate\Auth\Middleware\Authenticate::class,` 
 in `$middlewarePriority` array in the in the `app/Http/Kernel.php` file.
 
-
+ 
 #### TODO:
-- [ ] Add a nuxt guest middleware
-- [ ] Add a nuxt auth middleware
-- [ ] Add a php linting (like ESLint, probably pretier with psr configuration) 
+- [x] Refactor authToken plugin with services injection (find an article about that approach)
+- [x] Rename non-base component with no App prefix
+- [x] Add a nuxt guest middleware
+- [x] Add a nuxt auth middleware
+- [ ] Refactor auth module
+- [ ] Add good linter config for nuxt (probably standard or airbnb)
+- [ ] Add a php linting (like ESLint, probably prettier with psr configuration) 
 - [ ] Add a php cli user:create command
 - [ ] Change reset password behaviour to less secure but more comfortable

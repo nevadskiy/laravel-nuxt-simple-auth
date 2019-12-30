@@ -1,14 +1,14 @@
 <template>
   <div class="justify-center items-center flex">
-    <AppLogo />
+    <Logo />
   </div>
 </template>
 
 <script>
-import AppLogo from '~/components/AppLogo.vue'
+import Logo from '~/components/Logo.vue'
 export default {
   components: {
-    AppLogo
+    Logo
   }
 }
 </script>

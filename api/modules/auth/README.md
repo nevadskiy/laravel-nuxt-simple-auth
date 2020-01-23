@@ -37,8 +37,8 @@ in `$middlewarePriority` array in the in the `app/Http/Kernel.php` file.
 - [x] Rename non-base component with no App prefix
 - [x] Add a nuxt guest middleware
 - [x] Add a nuxt auth middleware
-- [ ] Refactor auth module
-- [ ] Add good linter config for nuxt (probably standard or airbnb)
+- [x] Refactor auth module
+- [x] Add good linter config for nuxt
 - [ ] Add a php linting (like ESLint, probably prettier with psr configuration) 
 - [ ] Add a php cli user:create command
 - [ ] Change reset password behaviour to less secure but more comfortable

@@ -2,9 +2,9 @@
 
 namespace Module\Auth\UseCases\PasswordForgot;
 
-use Module\Auth\Models\User;
 use Module\Auth\Notifications\ResetPasswordNotification;
 use DomainException;
+use Module\Auth\Repository\UserRepository;
 use Nevadskiy\Tokens\Exceptions\LockoutException;
 use Nevadskiy\Tokens\TokenManager;
 
@@ -16,13 +16,20 @@ class PasswordForgotHandler
     private $tokenManager;
 
     /**
+     * @var UserRepository
+     */
+    private $userRepository;
+
+    /**
      * Handler constructor.
      *
      * @param TokenManager $tokenManager
+     * @param UserRepository $userRepository
      */
-    public function __construct(TokenManager $tokenManager)
+    public function __construct(TokenManager $tokenManager, UserRepository $userRepository)
     {
         $this->tokenManager = $tokenManager;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -34,21 +41,10 @@ class PasswordForgotHandler
      */
     public function handle(PasswordForgotCommand $command): void
     {
-        $user = $this->getUser($command);
+        $user = $this->userRepository->getByEmail($command->email);
 
         $token = $this->tokenManager->generateFor($user, 'password.reset');
 
         $user->notify(new ResetPasswordNotification($token));
-    }
-
-    /**
-     * Get the user user.
-     *
-     * @param PasswordForgotCommand $command
-     * @return User
-     */
-    protected function getUser(PasswordForgotCommand $command): User
-    {
-        return User::where('email', $command->email)->firstOrFail();
     }
 }

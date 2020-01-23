@@ -4,6 +4,8 @@ namespace Module\Auth;
 
 use Illuminate\Auth\Middleware\Authenticate;
 use Module\Auth\Http\Middleware\OnlyGuests;
+use Module\Auth\Repository\UserEloquentRepository;
+use Module\Auth\Repository\UserRepository;
 use Module\Auth\Services\TokenGenerator;
 use Module\Auth\UseCases\SignIn\SignInHandler;
 use Illuminate\Auth\Events\Registered;
@@ -89,6 +91,8 @@ class AuthServiceProvider extends ServiceProvider
             ->give(function (Application $app) {
                 return $app['auth']->guard()->getProvider();
             });
+
+        $this->app->singleton(UserRepository::class, UserEloquentRepository::class);
     }
 
     /**

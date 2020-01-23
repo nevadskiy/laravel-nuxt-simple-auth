@@ -5,6 +5,7 @@ namespace Module\Auth\UseCases\PasswordReset;
 use Module\Auth\Models\User;
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Contracts\Hashing\Hasher;
+use Module\Auth\Repository\UserRepository;
 use Nevadskiy\Tokens\Exceptions\TokenException;
 use Nevadskiy\Tokens\TokenManager;
 
@@ -13,23 +14,30 @@ class PasswordResetHandler
     /**
      * @var TokenManager
      */
-    protected $tokenManager;
+    private $tokenManager;
 
     /**
      * @var Hasher
      */
-    protected $hasher;
+    private $hasher;
+
+    /**
+     * @var UserRepository
+     */
+    private $userRepository;
 
     /**
      * Handler constructor.
      *
      * @param TokenManager $tokenManager
      * @param Hasher $hasher
+     * @param UserRepository $userRepository
      */
-    public function __construct(TokenManager $tokenManager, Hasher $hasher)
+    public function __construct(TokenManager $tokenManager, Hasher $hasher, UserRepository $userRepository)
     {
         $this->tokenManager = $tokenManager;
         $this->hasher = $hasher;
+        $this->userRepository = $userRepository;
     }
 
     /**
@@ -44,7 +52,7 @@ class PasswordResetHandler
         $this->tokenManager->useFor(
             $command->token,
             'password.reset',
-            $this->getUser($command),
+            $this->userRepository->getByEmail($command->email),
             function (User $user) use ($command) {
                 $this->reset($user, $command->password);
             }
@@ -67,23 +75,12 @@ class PasswordResetHandler
     }
 
     /**
-     * Get the user.
-     *
-     * @param PasswordResetCommand $command
-     * @return User
-     */
-    protected function getUser(PasswordResetCommand $command): User
-    {
-        return User::where('email', $command->email)->firstOrFail();
-    }
-
-    /**
      * Set the password for the given user.
      *
      * @param User $user
      * @param string $password
      */
-    protected function setUserPassword(User $user, string $password): void
+    private function setUserPassword(User $user, string $password): void
     {
         $user->password = $this->hasher->make($password);
     }
@@ -93,7 +90,7 @@ class PasswordResetHandler
      *
      * @param User $user
      */
-    protected function clearApiToken(User $user): void
+    private function clearApiToken(User $user): void
     {
         $user->api_token = null;
     }

@@ -31,14 +31,27 @@ class SignUpHandler
      */
     public function handle(SignUpCommand $command): User
     {
+        $user = $this->createUser($command);
+
+        event(new Registered($user));
+
+        return $user;
+    }
+
+    /**
+     * Create a user.
+     *
+     * @param SignUpCommand $command
+     * @return User
+     */
+    protected function createUser(SignUpCommand $command): User
+    {
         $user = new User([
             'email' => $command->email,
             'password' => $this->hasher->make($command->password),
         ]);
 
         $user->save();
-
-        event(new Registered($user));
 
         return $user;
     }

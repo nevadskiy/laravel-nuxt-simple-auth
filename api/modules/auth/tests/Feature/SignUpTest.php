@@ -2,6 +2,7 @@
 
 namespace Module\Auth\Tests\Feature;
 
+use Illuminate\Contracts\Hashing\Hasher;
 use Module\Auth\Models\User;
 use Illuminate\Http\Response;
 use Module\Auth\Tests\DatabaseTestCase;
@@ -13,6 +14,12 @@ class SignUpTest extends DatabaseTestCase
     /** @test */
     public function guests_can_sign_up_with_email_and_password(): void
     {
+        $this->mock(Hasher::class)
+            ->shouldReceive('make')
+            ->once()
+            ->with('secret123')
+            ->andReturn('secret_hash');
+
         $response = $this->signUpRequest([
             'email' => 'user@mail.com',
             'password' => 'secret123',
@@ -22,6 +29,7 @@ class SignUpTest extends DatabaseTestCase
 
         $this->assertDatabaseHas(User::TABLE, [
             'email' => 'user@mail.com',
+            'password' => 'secret_hash',
         ]);
     }
 

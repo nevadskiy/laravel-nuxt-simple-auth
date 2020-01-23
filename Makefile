@@ -151,7 +151,7 @@ composer-install:
 
 # Update composer dependencies
 composer-update:
-	docker-compose exec php composer install
+	docker-compose exec php composer update
 
 # Update yarn dependencies
 yarn-update:

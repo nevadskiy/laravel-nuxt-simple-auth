@@ -2,6 +2,7 @@
 
 namespace Module\Auth\Http\Controllers\Api;
 
+use Module\Auth\UseCases\SignOut\SignOutCommand;
 use Module\Auth\UseCases\SignOut\SignOutHandler;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,9 @@ class SignOutController
      */
     public function __invoke(Request $request, SignOutHandler $handler)
     {
-        $handler->handle($request->user());
+        $handler->handle(
+            new SignOutCommand($request->user())
+        );
 
         return response()->json([], Response::HTTP_NO_CONTENT);
     }

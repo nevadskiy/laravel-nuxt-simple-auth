@@ -2,17 +2,15 @@
 
 namespace Module\Auth\UseCases\SignOut;
 
-use Module\Auth\Models\User;
-
 class SignOutHandler
 {
     /**
      * Handle the sign out use case.
      *
-     * @param User $user
+     * @param SignOutCommand $command
      */
-    public function handle(User $user): void
+    public function handle(SignOutCommand $command): void
     {
-        $user->update(['api_token' => null]);
+        $command->user->update(['api_token' => null]);
     }
 }

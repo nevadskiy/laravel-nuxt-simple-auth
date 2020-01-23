@@ -2,6 +2,7 @@
 
 namespace Module\Auth\Tests\Unit\UseCases\SignOut;
 
+use Module\Auth\UseCases\SignOut\SignOutCommand;
 use Module\Auth\UseCases\SignOut\SignOutHandler;
 use Module\Auth\Models\User;
 use Module\Auth\Tests\DatabaseTestCase;
@@ -20,7 +21,9 @@ class SignOutHandlerTest extends DatabaseTestCase
             'api_token' => 'TEST_API_TOKEN',
         ]);
 
-        (new SignOutHandler)->handle($user);
+        (new SignOutHandler)->handle(
+            new SignOutCommand($user)
+        );
 
         $this->assertEmpty($user->fresh()->api_token);
     }
